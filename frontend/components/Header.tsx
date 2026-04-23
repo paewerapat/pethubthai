@@ -24,7 +24,7 @@ export default function Header() {
             </div>
             <div className="flex flex-col">
               <span className="text-2xl font-bold bg-gradient-to-r from-[#5fca9f] to-[#6bb8e3] bg-clip-text text-transparent leading-none">
-                PetHub TH
+                PetHub Thailand
               </span>
               <span className="text-xs text-gray-500 mt-0.5">ช่วยน้องกลับบ้าน</span>
             </div>

@@ -14,6 +14,7 @@ import { PostImage } from './post-image.entity';
 export enum PetType {
   CAT = 'cat',
   DOG = 'dog',
+  OTHER = 'other',
 }
 
 export enum PetGender {

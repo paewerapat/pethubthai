@@ -1,0 +1,26 @@
+{
+  "name": "pethubthai",
+  "version": "1.0.0",
+  "description": "แพลตฟอร์มช่วยเหลือสัตว์เลี้ยงหาย รวมประกาศตามหา ประกาศรับเลี้ยง และหาบ้านให้น้องในประเทศไทย",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "node deploy.mjs",
+    "deploy:frontend": "node deploy.mjs --only=frontend",
+    "deploy:backend": "node deploy.mjs --only=backend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paewerapat/pethubthai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/paewerapat/pethubthai/issues"
+  },
+  "homepage": "https://github.com/paewerapat/pethubthai#readme",
+  "dependencies": {
+    "basic-ftp": "^5.3.0"
+  }
+}

@@ -100,7 +100,10 @@ export class PostsService {
       throw new ForbiddenException('You can only update your own posts');
     }
 
-    const { images, ...postData } = updatePostDto;
+    const dto = updatePostDto as UpdatePostDto & {
+      images?: { imageUrl: string; order: number }[];
+    };
+    const { images, ...postData } = dto;
 
     Object.assign(post, postData);
     await this.postRepository.save(post);

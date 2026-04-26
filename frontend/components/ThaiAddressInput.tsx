@@ -101,13 +101,6 @@ export default function ThaiAddressInput({ value, onChange, errors }: Props) {
         : 'border-gray-200 focus:ring-[#5fca9f]/30 focus:border-[#5fca9f]'
     }`;
 
-  const inp = (err?: string) =>
-    `w-full px-4 py-3 rounded-xl border bg-white text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-      err
-        ? 'border-red-300 focus:ring-red-200'
-        : 'border-gray-200 focus:ring-[#5fca9f]/30 focus:border-[#5fca9f]'
-    }`;
-
   const isLoading = db.length === 0;
 
   return (
@@ -171,18 +164,14 @@ export default function ThaiAddressInput({ value, onChange, errors }: Props) {
 
       {/* Zipcode */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          รหัสไปรษณีย์ <span className="text-red-400">*</span>
-        </label>
+        <label className="block text-sm font-medium text-gray-700 mb-2">รหัสไปรษณีย์</label>
         <input
           type="text"
           value={value.zipcode}
-          onChange={(e) => onChange({ ...value, zipcode: e.target.value })}
-          placeholder="เช่น 10110"
-          maxLength={5}
-          className={inp(errors?.zipcode)}
+          readOnly
+          placeholder="กรอกอัตโนมัติ"
+          className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed select-none"
         />
-        {errors?.zipcode && <p className="text-red-400 text-xs mt-1">{errors.zipcode}</p>}
       </div>
     </div>
   );

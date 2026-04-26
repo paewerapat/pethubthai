@@ -5,7 +5,10 @@ import {
   Get,
   UseGuards,
   Request,
+  Res,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -28,6 +31,33 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getProfile(@Request() req) {
-    return req.user;
+    const { password, ...user } = req.user;
+    return user;
+  }
+
+  // ── Google OAuth ──
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  googleCallback(@Request() req, @Res() res: Response) {
+    const token = this.authService.generateToken(req.user);
+    const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontend}/auth/callback?token=${token}`);
+  }
+
+  // ── Facebook OAuth ──
+  @Get('facebook')
+  @UseGuards(AuthGuard('facebook'))
+  facebookAuth() {}
+
+  @Get('facebook/callback')
+  @UseGuards(AuthGuard('facebook'))
+  facebookCallback(@Request() req, @Res() res: Response) {
+    const token = this.authService.generateToken(req.user);
+    const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontend}/auth/callback?token=${token}`);
   }
 }

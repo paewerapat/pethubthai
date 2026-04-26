@@ -14,6 +14,72 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export interface PostImage {
+  id: string;
+  imageUrl: string;
+  order: number;
+}
+
+export interface Post {
+  id: string;
+  petName: string;
+  petType: 'cat' | 'dog' | 'other';
+  breed?: string;
+  gender: 'male' | 'female' | 'unknown';
+  ageEstimate?: string;
+  status: 'lost' | 'found' | 'adopted';
+  lostDate: string;
+  lostLocation: string;
+  latitude: number;
+  longitude: number;
+  description?: string;
+  phoneNumber: string;
+  lineId?: string;
+  facebook?: string;
+  instagram?: string;
+  posterName: string;
+  userId: string;
+  images: PostImage[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PostsResponse {
+  data: Post[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export async function fetchPosts(params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  petType?: string;
+}): Promise<PostsResponse> {
+  const { data } = await api.get('/posts', { params });
+  return data;
+}
+
+export async function fetchPost(id: string): Promise<Post> {
+  const { data } = await api.get(`/posts/${id}`);
+  return data;
+}
+
+export async function fetchMyPosts(): Promise<Post[]> {
+  const { data } = await api.get('/posts/my-posts');
+  return data;
+}
+
+export async function updatePostStatus(id: string, status: 'lost' | 'found' | 'adopted') {
+  const { data } = await api.patch(`/posts/${id}`, { status });
+  return data;
+}
+
+export async function deletePost(id: string) {
+  await api.delete(`/posts/${id}`);
+}
+
 export async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append('file', file);
@@ -43,6 +109,28 @@ export interface CreatePostPayload {
 
 export async function createPost(payload: CreatePostPayload) {
   const { data } = await api.post('/posts', payload);
+  return data;
+}
+
+export interface AuthUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+export async function login(email: string, password: string): Promise<{ user: AuthUser; access_token: string }> {
+  const { data } = await api.post('/auth/login', { email, password });
+  return data;
+}
+
+export async function register(name: string, email: string, password: string): Promise<{ user: AuthUser; access_token: string }> {
+  const { data } = await api.post('/auth/register', { name, email, password });
+  return data;
+}
+
+export async function getMe(): Promise<AuthUser> {
+  const { data } = await api.get('/auth/me');
   return data;
 }
 

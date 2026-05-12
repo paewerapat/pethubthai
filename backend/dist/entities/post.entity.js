@@ -55,6 +55,7 @@ let Post = class Post {
     facebook;
     instagram;
     posterName;
+    viewCount;
     hasReward;
     rewardAmount;
     posterRelation;
@@ -145,6 +146,10 @@ __decorate([
     (0, typeorm_1.Column)({ name: 'poster_name' }),
     __metadata("design:type", String)
 ], Post.prototype, "posterName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'view_count', default: 0 }),
+    __metadata("design:type", Number)
+], Post.prototype, "viewCount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'has_reward', default: false }),
     __metadata("design:type", Boolean)

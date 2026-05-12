@@ -18,5 +18,6 @@ export declare class PostsService {
     findOne(id: string): Promise<Post>;
     update(id: string, updatePostDto: UpdatePostDto, user: User): Promise<Post>;
     remove(id: string, user: User): Promise<void>;
+    incrementView(id: string): Promise<void>;
     findByUser(userId: string): Promise<Post[]>;
 }

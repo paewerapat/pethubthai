@@ -38,6 +38,7 @@ export declare class Post {
     facebook: string;
     instagram: string;
     posterName: string;
+    viewCount: number;
     hasReward: boolean;
     rewardAmount: string;
     posterRelation: PosterRelation;

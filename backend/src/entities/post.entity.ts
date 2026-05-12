@@ -100,6 +100,9 @@ export class Post {
   @Column({ name: 'poster_name' })
   posterName: string;
 
+  @Column({ name: 'view_count', default: 0 })
+  viewCount: number;
+
   @Column({ name: 'has_reward', default: false })
   hasReward: boolean;
 

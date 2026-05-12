@@ -58,6 +58,11 @@ export class PostsController {
     return this.postsService.findOne(id);
   }
 
+  @Post(':id/view')
+  incrementView(@Param('id') id: string) {
+    return this.postsService.incrementView(id);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   update(

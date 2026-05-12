@@ -13,6 +13,7 @@ export declare class PostsController {
     }>;
     findMyPosts(req: any): Promise<import("../entities/post.entity").Post[]>;
     findOne(id: string): Promise<import("../entities/post.entity").Post>;
+    incrementView(id: string): Promise<void>;
     update(id: string, updatePostDto: UpdatePostDto, req: any): Promise<import("../entities/post.entity").Post>;
     remove(id: string, req: any): Promise<void>;
 }

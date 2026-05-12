@@ -146,6 +146,10 @@ export class PostsService {
     await this.postRepository.remove(post);
   }
 
+  async incrementView(id: string): Promise<void> {
+    await this.postRepository.increment({ id }, 'viewCount', 1);
+  }
+
   async findByUser(userId: string): Promise<Post[]> {
     return this.postRepository.find({
       where: { userId },

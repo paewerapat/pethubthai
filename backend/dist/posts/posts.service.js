@@ -111,6 +111,9 @@ let PostsService = class PostsService {
         }
         await this.postRepository.remove(post);
     }
+    async incrementView(id) {
+        await this.postRepository.increment({ id }, 'viewCount', 1);
+    }
     async findByUser(userId) {
         return this.postRepository.find({
             where: { userId },

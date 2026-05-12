@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Layout from '@/components/Layout';
-import { getToken, getMe, deletePost, type Post, type AuthUser } from '@/lib/api';
+import { getToken, getMe, deletePost, trackPostView, type Post, type AuthUser } from '@/lib/api';
 import { PET_META, STATUS_META, GENDER_LABEL, relativeTime } from '@/lib/utils';
 import {
   FiPhone, FiMapPin, FiCalendar, FiUser, FiArrowLeft,
-  FiTrash2, FiEdit2, FiShare2, FiCopy, FiCheck,
+  FiTrash2, FiEdit2, FiShare2, FiCopy, FiCheck, FiEye,
 } from 'react-icons/fi';
 import { FaLine, FaFacebook, FaInstagram, FaXTwitter } from 'react-icons/fa6';
 
@@ -31,7 +31,13 @@ export default function PostDetailClient({ post }: { post: Post }) {
     if (getToken()) {
       getMe().then(setUser).catch(() => {});
     }
-  }, []);
+    // นับ view ครั้งเดียวต่อ session ต่อ post
+    const key = `viewed_${post.id}`;
+    if (!sessionStorage.getItem(key)) {
+      sessionStorage.setItem(key, '1');
+      trackPostView(post.id);
+    }
+  }, [post.id]);
 
   const isOwner = !!user && user.id === post.userId;
   const postUrl = `${BASE_URL}/post/${post.id}`;
@@ -80,12 +86,18 @@ export default function PostDetailClient({ post }: { post: Post }) {
     <Layout>
       <div className="container mx-auto px-6 py-10 max-w-4xl">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-          <Link href="/" className="hover:text-[#5fca9f] transition-colors">หน้าแรก</Link>
-          <span>/</span>
-          <Link href="/posts" className="hover:text-[#5fca9f] transition-colors">ตามหาน้อง</Link>
-          <span>/</span>
-          <span className="text-gray-800 truncate max-w-[160px]">{post.petName}</span>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Link href="/" className="hover:text-[#5fca9f] transition-colors">หน้าแรก</Link>
+            <span>/</span>
+            <Link href="/posts" className="hover:text-[#5fca9f] transition-colors">ตามหาน้อง</Link>
+            <span>/</span>
+            <span className="text-gray-800 truncate max-w-[160px]">{post.petName}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-sm text-gray-400">
+            <FiEye className="w-4 h-4" />
+            <span>{(post.viewCount ?? 0).toLocaleString()} ครั้ง</span>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">

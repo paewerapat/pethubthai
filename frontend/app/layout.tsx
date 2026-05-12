@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Prompt, Kanit } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
+
+const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 const prompt = Prompt({
   weight: ['300', '400', '500', '600', '700'],
@@ -68,6 +71,7 @@ export default function RootLayout({
       className={`${prompt.variable} ${kanit.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </html>
   );
 }

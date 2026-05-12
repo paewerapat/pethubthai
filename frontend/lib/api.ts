@@ -38,6 +38,7 @@ export interface Post {
   facebook?: string;
   instagram?: string;
   posterName: string;
+  viewCount: number;
   hasReward: boolean;
   rewardAmount?: string;
   userId: string;
@@ -84,6 +85,10 @@ export async function updatePostStatus(id: string, status: 'lost' | 'found' | 'a
 export async function updatePost(id: string, payload: Partial<CreatePostPayload>) {
   const { data } = await api.patch(`/posts/${id}`, payload);
   return data;
+}
+
+export async function trackPostView(id: string) {
+  await api.post(`/posts/${id}/view`).catch(() => {});
 }
 
 export async function deletePost(id: string) {

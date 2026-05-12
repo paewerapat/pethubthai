@@ -143,9 +143,9 @@ export default function LoginPage() {
       <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
-            <img src="/images/logo-icon.png" alt="PetHub Thai" className="w-16 h-16 rounded-2xl object-cover mx-auto mb-4 shadow-lg" />
+            <img src="/images/logo-width-transparent.png" alt="PetHub Thai" className="h-16 w-auto mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-gray-800">เข้าสู่ระบบ</h1>
-            <p className="text-gray-500 mt-2">ยินดีต้อนรับกลับมา PetHub TH</p>
+            <p className="text-gray-500 mt-2">ยินดีต้อนรับกลับมา PetHub Thai</p>
           </div>
           <Suspense fallback={<div className="card animate-pulse h-64" />}>
             <LoginForm />

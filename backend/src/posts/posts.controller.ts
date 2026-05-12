@@ -32,12 +32,18 @@ export class PostsController {
     @Query('limit') limit?: string,
     @Query('status') status?: string,
     @Query('petType') petType?: string,
+    @Query('province') province?: string,
+    @Query('amphoe') amphoe?: string,
+    @Query('tambon') tambon?: string,
   ) {
     return this.postsService.findAll(
       page ? parseInt(page) : 1,
       limit ? parseInt(limit) : 10,
       status,
       petType,
+      province,
+      amphoe,
+      tambon,
     );
   }
 

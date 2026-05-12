@@ -38,6 +38,8 @@ export declare class Post {
     facebook: string;
     instagram: string;
     posterName: string;
+    hasReward: boolean;
+    rewardAmount: string;
     posterRelation: PosterRelation;
     user: User;
     userId: string;

@@ -50,6 +50,8 @@ const schema = z
     facebook: z.string().optional(),
     instagram: z.string().optional(),
     posterName: z.string().min(1, 'กรุณากรอกชื่อผู้โพสต์'),
+    hasReward: z.boolean().optional(),
+    rewardAmount: z.string().optional(),
   })
   .refine(
     (d) => d.petType !== 'other' || (d.otherPetType && d.otherPetType.trim().length > 0),
@@ -81,6 +83,12 @@ export default function CreatePostPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!getToken()) {
+      router.replace('/login?redirect=/post/create');
+    }
+  }, [router]);
 
   const {
     register,
@@ -192,12 +200,14 @@ export default function CreatePostPage() {
       const lostLocation = [data.district, data.amphoe, data.province, data.zipcode]
         .filter(Boolean)
         .join(' ');
-      const { district, amphoe, province, zipcode, otherPetType, ...rest } = data;
+      const { district, amphoe, province, zipcode, otherPetType, hasReward, rewardAmount, ...rest } = data;
       const post = await createPost({
         ...rest,
         status: 'lost',
         lostLocation,
         ...(data.petType === 'other' && { breed: otherPetType }),
+        hasReward: hasReward ?? false,
+        rewardAmount: hasReward ? (rewardAmount || undefined) : undefined,
         images: imagePayload,
       });
       router.push(`/post/${post.id}`);
@@ -355,7 +365,7 @@ export default function CreatePostPage() {
               <span className="w-8 h-8 bg-gradient-to-br from-[#6bb8e3] to-[#5aa3ce] rounded-lg flex items-center justify-center text-white text-sm font-bold">2</span>
               รูปภาพน้อง
             </h2>
-            <p className="text-sm text-gray-400 mb-5">อัพโหลดได้ 1–3 รูป — ลากวางหรือกดเพื่อเลือกไฟล์</p>
+            <p className="text-sm text-gray-400 mb-5">อัพโหลดได้ 1–3 รูป — รูปแรก (⭐) คือรูปปก กดดาวบนรูปอื่นเพื่อตั้งเป็นปก</p>
 
             <div className="grid grid-cols-3 gap-4 mb-4">
               {images.map((img, i) => (
@@ -368,8 +378,17 @@ export default function CreatePostPage() {
                   >
                     ×
                   </button>
-                  {i === 0 && (
-                    <span className="absolute bottom-2 left-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full">หลัก</span>
+                  {i === 0 ? (
+                    <span className="absolute top-2 left-2 bg-yellow-400 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center shadow">⭐</span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setImages(prev => { const next = [...prev]; const [c] = next.splice(i, 1); return [c, ...next]; })}
+                      className="absolute top-2 left-2 w-6 h-6 bg-white/80 hover:bg-yellow-400 hover:text-white text-gray-500 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all text-xs shadow"
+                      title="ตั้งเป็นรูปปก"
+                    >
+                      ☆
+                    </button>
                   )}
                 </div>
               ))}
@@ -587,6 +606,54 @@ export default function CreatePostPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* ── Section 6: ค่าตอบแทน ── */}
+          <div className="card">
+            <h2 className="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+              <span className="w-8 h-8 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">6</span>
+              ค่าตอบแทน / สินน้ำใจ
+            </h2>
+            <p className="text-sm text-gray-400 mb-5">สำหรับผู้ที่ช่วยนำน้องกลับมาได้</p>
+
+            <label className="flex items-center gap-3 cursor-pointer mb-5">
+              <input type="checkbox" {...register('hasReward')} className="w-5 h-5 rounded accent-amber-500 cursor-pointer" />
+              <span className="font-medium text-gray-700">มีค่าตอบแทน / สินน้ำใจ</span>
+            </label>
+
+            {watch('hasReward') && (
+              <div className="space-y-4 pl-8">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 mb-2">เลือกจำนวนเงินด่วน</p>
+                  <div className="flex flex-wrap gap-2">
+                    {['100', '200', '300', '500', '1,000', '2,000', '3,000', '5,000'].map((amount) => (
+                      <button
+                        key={amount}
+                        type="button"
+                        onClick={() => setValue('rewardAmount', `${amount} บาท`)}
+                        className={`px-3 py-1.5 rounded-xl text-sm font-medium border transition-all ${
+                          watch('rewardAmount') === `${amount} บาท`
+                            ? 'bg-amber-400 border-amber-400 text-white'
+                            : 'border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-500'
+                        }`}
+                      >
+                        {amount} บาท
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    หรือระบุเอง <span className="text-gray-400 font-normal">(ไม่บังคับ)</span>
+                  </label>
+                  <input
+                    {...register('rewardAmount')}
+                    placeholder="เช่น 500 บาท, ของขวัญ หรือเว้นว่างหากไม่ระบุจำนวน"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Error */}

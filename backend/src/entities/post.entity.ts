@@ -100,6 +100,12 @@ export class Post {
   @Column({ name: 'poster_name' })
   posterName: string;
 
+  @Column({ name: 'has_reward', default: false })
+  hasReward: boolean;
+
+  @Column({ name: 'reward_amount', nullable: true })
+  rewardAmount: string;
+
   @Column({
     type: 'enum',
     enum: PosterRelation,

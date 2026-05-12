@@ -41,7 +41,7 @@ let PostsService = class PostsService {
         }
         return this.findOne(savedPost.id);
     }
-    async findAll(page = 1, limit = 10, status, petType) {
+    async findAll(page = 1, limit = 10, status, petType, province, amphoe, tambon) {
         const query = this.postRepository
             .createQueryBuilder('post')
             .leftJoinAndSelect('post.images', 'images')
@@ -52,6 +52,15 @@ let PostsService = class PostsService {
         }
         if (petType) {
             query.andWhere('post.petType = :petType', { petType });
+        }
+        if (tambon) {
+            query.andWhere('post.lostLocation LIKE :tambon', { tambon: `%${tambon}%` });
+        }
+        else if (amphoe) {
+            query.andWhere('post.lostLocation LIKE :amphoe', { amphoe: `%${amphoe}%` });
+        }
+        else if (province) {
+            query.andWhere('post.lostLocation LIKE :province', { province: `%${province}%` });
         }
         const [data, total] = await query
             .skip((page - 1) * limit)

@@ -28,8 +28,8 @@ export default function Header() {
   }
 
   const navItems = [
-    { href: '/', label: 'ตามหาน้อง' },
-    { href: '/posts', label: 'ประกาศทั้งหมด' },
+    { href: '/', label: 'กลับบ้าน' },
+    { href: '/posts', label: 'ตามหาน้อง' },
   ];
 
   return (
@@ -37,16 +37,12 @@ export default function Header() {
       <div className="container mx-auto px-6 py-5">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 bg-gradient-to-br from-[#5fca9f] to-[#6bb8e3] rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-lg">
-              <span className="text-3xl">🐾</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-2xl font-bold bg-gradient-to-r from-[#5fca9f] to-[#6bb8e3] bg-clip-text text-transparent leading-none">
-                PetHub TH
-              </span>
-              <span className="text-xs text-gray-500 mt-0.5">ช่วยน้องกลับบ้าน</span>
-            </div>
+          <Link href="/" className="group">
+            <img
+              src="/images/logo-width-transparent.png"
+              alt="PetHub Thai"
+              className="h-14 w-auto group-hover:scale-105 transition-transform duration-300"
+            />
           </Link>
 
           {/* Navigation */}

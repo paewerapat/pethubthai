@@ -42,6 +42,8 @@ class CreatePostDto {
     lineId;
     facebook;
     instagram;
+    hasReward;
+    rewardAmount;
     posterName;
     posterRelation;
     images;
@@ -118,6 +120,16 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePostDto.prototype, "instagram", void 0);
+__decorate([
+    (0, class_validator_1.IsBoolean)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Boolean)
+], CreatePostDto.prototype, "hasReward", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePostDto.prototype, "rewardAmount", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),

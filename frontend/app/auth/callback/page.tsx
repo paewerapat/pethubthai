@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { setToken } from '@/lib/api';
 
-export default function AuthCallbackPage() {
+function AuthCallbackInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -19,13 +19,18 @@ export default function AuthCallbackPage() {
     router.replace(redirect);
   }, [router, searchParams]);
 
+  return null;
+}
+
+export default function AuthCallbackPage() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center space-y-4">
-        <div className="w-16 h-16 bg-gradient-to-br from-[#5fca9f] to-[#6bb8e3] rounded-2xl flex items-center justify-center mx-auto animate-pulse">
-          <span className="text-4xl">🐾</span>
-        </div>
+        <img src="/images/logo-icon.png" alt="PetHub Thai" className="w-16 h-16 rounded-2xl object-cover mx-auto animate-pulse shadow-lg" />
         <p className="text-gray-500 text-lg">กำลังเข้าสู่ระบบ...</p>
+        <Suspense>
+          <AuthCallbackInner />
+        </Suspense>
       </div>
     </div>
   );

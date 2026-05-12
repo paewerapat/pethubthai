@@ -55,6 +55,8 @@ let Post = class Post {
     facebook;
     instagram;
     posterName;
+    hasReward;
+    rewardAmount;
     posterRelation;
     user;
     userId;
@@ -143,6 +145,14 @@ __decorate([
     (0, typeorm_1.Column)({ name: 'poster_name' }),
     __metadata("design:type", String)
 ], Post.prototype, "posterName", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'has_reward', default: false }),
+    __metadata("design:type", Boolean)
+], Post.prototype, "hasReward", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'reward_amount', nullable: true }),
+    __metadata("design:type", String)
+], Post.prototype, "rewardAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',

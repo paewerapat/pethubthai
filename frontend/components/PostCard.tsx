@@ -36,7 +36,14 @@ export default function PostCard({ post }: { post: Post }) {
 
         {/* Content */}
         <div className="p-4">
-          <h3 className="font-bold text-lg text-gray-800 mb-2 truncate">{post.petName}</h3>
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <h3 className="font-bold text-lg text-gray-800 truncate">{post.petName}</h3>
+            {post.hasReward && (
+              <span className="shrink-0 text-xs bg-amber-100 text-amber-600 font-medium px-2 py-0.5 rounded-full whitespace-nowrap">
+                💰 มีรางวัล
+              </span>
+            )}
+          </div>
 
           <div className="space-y-1.5 text-sm text-gray-500">
             <div className="flex items-center gap-1.5 truncate">

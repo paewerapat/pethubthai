@@ -19,6 +19,8 @@ export declare class CreatePostDto {
     lineId?: string;
     facebook?: string;
     instagram?: string;
+    hasReward?: boolean;
+    rewardAmount?: string;
     posterName: string;
     posterRelation?: PosterRelation;
     images: ImageDto[];

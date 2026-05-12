@@ -1,10 +1,20 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import type { Metadata } from 'next';
 import Layout from '@/components/Layout';
 import PostCard from '@/components/PostCard';
 import { fetchPosts, type Post } from '@/lib/api';
-import { FiSearch } from 'react-icons/fi';
+
+const GEO_URL =
+  'https://raw.githubusercontent.com/thailand-geography-data/thailand-geography-json/main/src/geography.json';
+
+interface GeoEntry {
+  provinceNameTh: string;
+  districtNameTh: string;
+  subdistrictNameTh: string;
+  postalCode: number;
+}
 
 const PET_FILTERS = [
   { value: '', label: 'ทั้งหมด' },
@@ -22,20 +32,56 @@ const STATUS_FILTERS = [
 
 const LIMIT = 12;
 
+let _geoCache: GeoEntry[] | null = null;
+
 export default function PostsPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [petType, setPetType] = useState('');
   const [status, setStatus] = useState('');
+  const [province, setProvince] = useState('');
+  const [amphoe, setAmphoe] = useState('');
+  const [tambon, setTambon] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Geography data
+  const [geoData, setGeoData] = useState<GeoEntry[]>([]);
+  const [geoLoading, setGeoLoading] = useState(true);
+
+  useEffect(() => {
+    if (_geoCache) { setGeoData(_geoCache); setGeoLoading(false); return; }
+    fetch(GEO_URL)
+      .then((r) => r.json())
+      .then((d) => { _geoCache = d; setGeoData(d); })
+      .catch(() => {})
+      .finally(() => setGeoLoading(false));
+  }, []);
+
+  const provinces = Array.from(new Set(geoData.map((e) => e.provinceNameTh))).sort();
+
+  const amphoes = province
+    ? Array.from(new Set(geoData.filter((e) => e.provinceNameTh === province).map((e) => e.districtNameTh))).sort()
+    : [];
+
+  const tambons = amphoe
+    ? Array.from(new Set(geoData.filter((e) => e.districtNameTh === amphoe && e.provinceNameTh === province).map((e) => e.subdistrictNameTh))).sort()
+    : [];
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetchPosts({ page, limit: LIMIT, petType: petType || undefined, status: status || undefined });
+      const res = await fetchPosts({
+        page,
+        limit: LIMIT,
+        petType: petType || undefined,
+        status: status || undefined,
+        province: province || undefined,
+        amphoe: amphoe || undefined,
+        tambon: tambon || undefined,
+      });
       setPosts(res.data);
       setTotal(res.total);
     } catch {
@@ -43,37 +89,55 @@ export default function PostsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, petType, status]);
+  }, [page, petType, status, province, amphoe, tambon]);
 
   useEffect(() => { load(); }, [load]);
 
-  function changeFilter(type: 'petType' | 'status', val: string) {
+  function changePetType(val: string) { setPage(1); setPetType(val); }
+  function changeStatus(val: string) { setPage(1); setStatus(val); }
+
+  function changeProvince(val: string) {
     setPage(1);
-    if (type === 'petType') setPetType(val);
-    else setStatus(val);
+    setProvince(val);
+    setAmphoe('');
+    setTambon('');
+  }
+  function changeAmphoe(val: string) {
+    setPage(1);
+    setAmphoe(val);
+    setTambon('');
+  }
+  function changeTambon(val: string) { setPage(1); setTambon(val); }
+
+  function clearLocation() {
+    setPage(1);
+    setProvince('');
+    setAmphoe('');
+    setTambon('');
   }
 
   const totalPages = Math.ceil(total / LIMIT);
+  const hasLocationFilter = province || amphoe || tambon;
 
   return (
     <Layout>
       <div className="container mx-auto px-6 py-10">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">ประกาศทั้งหมด</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-1">ตามหาน้อง</h1>
           <p className="text-gray-500">
             {loading ? 'กำลังโหลด...' : `พบ ${total.toLocaleString()} ประกาศ`}
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 mb-8 shadow-sm border border-white/50 space-y-3">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-5 mb-8 shadow-sm border border-white/50 space-y-4">
           {/* Pet type */}
           <div className="flex flex-wrap gap-2">
             {PET_FILTERS.map((f) => (
               <button
                 key={f.value}
-                onClick={() => changeFilter('petType', f.value)}
+                onClick={() => changePetType(f.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   petType === f.value
                     ? 'bg-[#5fca9f] text-white shadow-md'
@@ -90,7 +154,7 @@ export default function PostsPage() {
             {STATUS_FILTERS.map((f) => (
               <button
                 key={f.value}
-                onClick={() => changeFilter('status', f.value)}
+                onClick={() => changeStatus(f.value)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   status === f.value
                     ? 'bg-gray-800 text-white shadow-md'
@@ -100,6 +164,61 @@ export default function PostsPage() {
                 {f.label}
               </button>
             ))}
+          </div>
+
+          {/* Location filter */}
+          <div className="border-t border-gray-100 pt-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm font-medium text-gray-600 shrink-0">📍 พื้นที่:</span>
+
+              {/* Province */}
+              <select
+                value={province}
+                onChange={(e) => changeProvince(e.target.value)}
+                disabled={geoLoading}
+                className="flex-1 min-w-[150px] px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 focus:outline-none focus:border-[#5fca9f] focus:ring-2 focus:ring-[#5fca9f]/20 disabled:opacity-50"
+              >
+                <option value="">{geoLoading ? 'กำลังโหลด...' : 'ทุกจังหวัด'}</option>
+                {provinces.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
+
+              {/* Amphoe */}
+              <select
+                value={amphoe}
+                onChange={(e) => changeAmphoe(e.target.value)}
+                disabled={!province}
+                className="flex-1 min-w-[150px] px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 focus:outline-none focus:border-[#5fca9f] focus:ring-2 focus:ring-[#5fca9f]/20 disabled:opacity-50 disabled:bg-gray-50"
+              >
+                <option value="">ทุกอำเภอ/เขต</option>
+                {amphoes.map((a) => (
+                  <option key={a} value={a}>{a}</option>
+                ))}
+              </select>
+
+              {/* Tambon */}
+              <select
+                value={tambon}
+                onChange={(e) => changeTambon(e.target.value)}
+                disabled={!amphoe}
+                className="flex-1 min-w-[150px] px-3 py-2 rounded-xl border border-gray-200 bg-white text-sm text-gray-700 focus:outline-none focus:border-[#5fca9f] focus:ring-2 focus:ring-[#5fca9f]/20 disabled:opacity-50 disabled:bg-gray-50"
+              >
+                <option value="">ทุกตำบล/แขวง</option>
+                {tambons.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+
+              {hasLocationFilter && (
+                <button
+                  onClick={clearLocation}
+                  className="px-3 py-2 rounded-xl text-sm text-gray-500 hover:text-red-500 hover:bg-red-50 transition-colors shrink-0"
+                >
+                  ✕ ล้าง
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

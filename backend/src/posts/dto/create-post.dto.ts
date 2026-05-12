@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsDateString,
   IsNumber,
+  IsBoolean,
   IsArray,
   ValidateNested,
   ArrayMinSize,
@@ -78,6 +79,14 @@ export class CreatePostDto {
   @IsString()
   @IsOptional()
   instagram?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  hasReward?: boolean;
+
+  @IsString()
+  @IsOptional()
+  rewardAmount?: string;
 
   @IsString()
   @IsNotEmpty()

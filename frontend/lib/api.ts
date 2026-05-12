@@ -38,6 +38,8 @@ export interface Post {
   facebook?: string;
   instagram?: string;
   posterName: string;
+  hasReward: boolean;
+  rewardAmount?: string;
   userId: string;
   images: PostImage[];
   createdAt: string;
@@ -56,6 +58,9 @@ export async function fetchPosts(params?: {
   limit?: number;
   status?: string;
   petType?: string;
+  province?: string;
+  amphoe?: string;
+  tambon?: string;
 }): Promise<PostsResponse> {
   const { data } = await api.get('/posts', { params });
   return data;
@@ -73,6 +78,11 @@ export async function fetchMyPosts(): Promise<Post[]> {
 
 export async function updatePostStatus(id: string, status: 'lost' | 'found' | 'adopted') {
   const { data } = await api.patch(`/posts/${id}`, { status });
+  return data;
+}
+
+export async function updatePost(id: string, payload: Partial<CreatePostPayload>) {
+  const { data } = await api.patch(`/posts/${id}`, payload);
   return data;
 }
 
@@ -104,6 +114,8 @@ export interface CreatePostPayload {
   facebook?: string;
   instagram?: string;
   posterName: string;
+  hasReward?: boolean;
+  rewardAmount?: string;
   images: { imageUrl: string; order: number }[];
 }
 

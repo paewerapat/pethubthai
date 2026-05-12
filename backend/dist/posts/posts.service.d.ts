@@ -9,7 +9,7 @@ export declare class PostsService {
     private postImageRepository;
     constructor(postRepository: Repository<Post>, postImageRepository: Repository<PostImage>);
     create(createPostDto: CreatePostDto, user: User): Promise<Post>;
-    findAll(page?: number, limit?: number, status?: string, petType?: string): Promise<{
+    findAll(page?: number, limit?: number, status?: string, petType?: string, province?: string, amphoe?: string, tambon?: string): Promise<{
         data: Post[];
         total: number;
         page: number;

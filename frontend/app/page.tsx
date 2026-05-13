@@ -156,7 +156,7 @@ export default async function Home() {
       <section className="py-20">
         <div className="container mx-auto px-6 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
-            <img src="/images/logo-width-transparent.png" alt="PetHub Thai" className="h-48 w-auto mx-auto" />
+            <img src="/images/logo-width-transparent.png" alt="PetHub Thai" className="h-24 w-auto mx-auto" />
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800">
               พร้อมช่วยน้องกลับบ้านหรือยัง?
             </h2>

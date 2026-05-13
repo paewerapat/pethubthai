@@ -41,7 +41,7 @@ let PostsService = class PostsService {
         }
         return this.findOne(savedPost.id);
     }
-    async findAll(page = 1, limit = 10, status, petType, province, amphoe, tambon) {
+    async findAll(page = 1, limit = 10, status, petType, province, amphoe, tambon, category) {
         const query = this.postRepository
             .createQueryBuilder('post')
             .leftJoinAndSelect('post.images', 'images')
@@ -52,6 +52,12 @@ let PostsService = class PostsService {
         }
         if (petType) {
             query.andWhere('post.petType = :petType', { petType });
+        }
+        if (category) {
+            query.andWhere('post.category = :category', { category });
+        }
+        else {
+            query.andWhere('post.category = :category', { category: 'lost' });
         }
         if (tambon) {
             query.andWhere('post.lostLocation LIKE :tambon', { tambon: `%${tambon}%` });

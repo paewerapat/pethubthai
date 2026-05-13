@@ -13,7 +13,12 @@ export declare enum PetGender {
 export declare enum PostStatus {
     LOST = "lost",
     FOUND = "found",
-    ADOPTED = "adopted"
+    ADOPTED = "adopted",
+    AVAILABLE = "available"
+}
+export declare enum PostCategory {
+    LOST = "lost",
+    ADOPTION = "adoption"
 }
 export declare enum PosterRelation {
     OWNER = "owner",
@@ -28,6 +33,7 @@ export declare class Post {
     gender: PetGender;
     ageEstimate: string;
     status: PostStatus;
+    category: PostCategory;
     lostDate: Date;
     lostLocation: string;
     latitude: number;

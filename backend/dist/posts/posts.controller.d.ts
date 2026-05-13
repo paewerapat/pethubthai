@@ -5,7 +5,7 @@ export declare class PostsController {
     private readonly postsService;
     constructor(postsService: PostsService);
     create(createPostDto: CreatePostDto, req: any): Promise<import("../entities/post.entity").Post>;
-    findAll(page?: string, limit?: string, status?: string, petType?: string, province?: string, amphoe?: string, tambon?: string): Promise<{
+    findAll(page?: string, limit?: string, status?: string, petType?: string, province?: string, amphoe?: string, tambon?: string, category?: string): Promise<{
         data: import("../entities/post.entity").Post[];
         total: number;
         page: number;

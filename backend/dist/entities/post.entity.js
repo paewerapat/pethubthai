@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Post = exports.PosterRelation = exports.PostStatus = exports.PetGender = exports.PetType = void 0;
+exports.Post = exports.PosterRelation = exports.PostCategory = exports.PostStatus = exports.PetGender = exports.PetType = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("./user.entity");
 const post_image_entity_1 = require("./post-image.entity");
@@ -30,7 +30,13 @@ var PostStatus;
     PostStatus["LOST"] = "lost";
     PostStatus["FOUND"] = "found";
     PostStatus["ADOPTED"] = "adopted";
+    PostStatus["AVAILABLE"] = "available";
 })(PostStatus || (exports.PostStatus = PostStatus = {}));
+var PostCategory;
+(function (PostCategory) {
+    PostCategory["LOST"] = "lost";
+    PostCategory["ADOPTION"] = "adoption";
+})(PostCategory || (exports.PostCategory = PostCategory = {}));
 var PosterRelation;
 (function (PosterRelation) {
     PosterRelation["OWNER"] = "owner";
@@ -45,6 +51,7 @@ let Post = class Post {
     gender;
     ageEstimate;
     status;
+    category;
     lostDate;
     lostLocation;
     latitude;
@@ -107,7 +114,15 @@ __decorate([
     __metadata("design:type", String)
 ], Post.prototype, "status", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'date', name: 'lost_date' }),
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: PostCategory,
+        default: PostCategory.LOST,
+    }),
+    __metadata("design:type", String)
+], Post.prototype, "category", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', name: 'lost_date', nullable: true }),
     __metadata("design:type", Date)
 ], Post.prototype, "lostDate", void 0);
 __decorate([

@@ -33,6 +33,7 @@ class CreatePostDto {
     gender;
     ageEstimate;
     status;
+    category;
     lostDate;
     lostLocation;
     latitude;
@@ -79,7 +80,13 @@ __decorate([
     __metadata("design:type", String)
 ], CreatePostDto.prototype, "status", void 0);
 __decorate([
+    (0, class_validator_1.IsEnum)(post_entity_1.PostCategory),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePostDto.prototype, "category", void 0);
+__decorate([
     (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePostDto.prototype, "lostDate", void 0);
 __decorate([

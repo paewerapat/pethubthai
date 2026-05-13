@@ -27,8 +27,8 @@ let PostsController = class PostsController {
     create(createPostDto, req) {
         return this.postsService.create(createPostDto, req.user);
     }
-    findAll(page, limit, status, petType, province, amphoe, tambon) {
-        return this.postsService.findAll(page ? parseInt(page) : 1, limit ? parseInt(limit) : 10, status, petType, province, amphoe, tambon);
+    findAll(page, limit, status, petType, province, amphoe, tambon, category) {
+        return this.postsService.findAll(page ? parseInt(page) : 1, limit ? parseInt(limit) : 10, status, petType, province, amphoe, tambon, category);
     }
     findMyPosts(req) {
         return this.postsService.findByUser(req.user.id);
@@ -65,8 +65,9 @@ __decorate([
     __param(4, (0, common_1.Query)('province')),
     __param(5, (0, common_1.Query)('amphoe')),
     __param(6, (0, common_1.Query)('tambon')),
+    __param(7, (0, common_1.Query)('category')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], PostsController.prototype, "findAll", null);
 __decorate([

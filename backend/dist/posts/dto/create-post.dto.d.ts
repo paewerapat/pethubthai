@@ -1,4 +1,4 @@
-import { PetType, PetGender, PostStatus, PosterRelation } from '../../entities/post.entity';
+import { PetType, PetGender, PostStatus, PostCategory, PosterRelation } from '../../entities/post.entity';
 declare class ImageDto {
     imageUrl: string;
     order: number;
@@ -10,7 +10,8 @@ export declare class CreatePostDto {
     gender?: PetGender;
     ageEstimate?: string;
     status?: PostStatus;
-    lostDate: string;
+    category?: PostCategory;
+    lostDate?: string;
     lostLocation: string;
     latitude: number;
     longitude: number;

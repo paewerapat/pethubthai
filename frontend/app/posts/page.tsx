@@ -266,9 +266,10 @@ export default function PostsPage() {
               ‹
             </button>
 
-            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-              const p = Math.max(1, Math.min(page - 2 + i, totalPages - 4 + i));
-              return (
+            {(() => {
+              const window = Math.min(5, totalPages);
+              const start = Math.max(1, Math.min(page - Math.floor(window / 2), totalPages - window + 1));
+              return Array.from({ length: window }, (_, i) => start + i).map((p) => (
                 <button
                   key={p}
                   onClick={() => setPage(p)}
@@ -280,8 +281,8 @@ export default function PostsPage() {
                 >
                   {p}
                 </button>
-              );
-            })}
+              ));
+            })()}
 
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}

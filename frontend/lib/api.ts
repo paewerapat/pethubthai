@@ -37,6 +37,7 @@ export interface Post {
   lineId?: string;
   facebook?: string;
   instagram?: string;
+  category: 'lost' | 'adoption';
   posterName: string;
   viewCount: number;
   hasReward: boolean;
@@ -62,6 +63,7 @@ export async function fetchPosts(params?: {
   province?: string;
   amphoe?: string;
   tambon?: string;
+  category?: string;
 }): Promise<PostsResponse> {
   const { data } = await api.get('/posts', { params });
   return data;
@@ -119,6 +121,7 @@ export interface CreatePostPayload {
   facebook?: string;
   instagram?: string;
   posterName: string;
+  category?: 'lost' | 'adoption';
   hasReward?: boolean;
   rewardAmount?: string;
   images: { imageUrl: string; order: number }[];

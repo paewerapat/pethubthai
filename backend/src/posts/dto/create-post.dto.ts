@@ -12,7 +12,7 @@ import {
   ArrayMaxSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PetType, PetGender, PostStatus, PosterRelation } from '../../entities/post.entity';
+import { PetType, PetGender, PostStatus, PostCategory, PosterRelation } from '../../entities/post.entity';
 
 class ImageDto {
   @IsString()
@@ -47,8 +47,13 @@ export class CreatePostDto {
   @IsOptional()
   status?: PostStatus;
 
+  @IsEnum(PostCategory)
+  @IsOptional()
+  category?: PostCategory;
+
   @IsDateString()
-  lostDate: string;
+  @IsOptional()
+  lostDate?: string;
 
   @IsString()
   @IsNotEmpty()

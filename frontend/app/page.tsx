@@ -153,10 +153,10 @@ export default async function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-[#e8f8f0] to-[#e8f4f8]">
+      <section className="py-20">
         <div className="container mx-auto px-6 text-center">
           <div className="max-w-3xl mx-auto space-y-8">
-            <img src="/images/logo-icon.png" alt="PetHub Thai" className="w-20 h-20 rounded-3xl object-cover mx-auto shadow-lg" />
+            <img src="/images/logo-width-transparent.png" alt="PetHub Thai" className="h-48 w-auto mx-auto" />
             <h2 className="text-4xl lg:text-5xl font-bold text-gray-800">
               พร้อมช่วยน้องกลับบ้านหรือยัง?
             </h2>

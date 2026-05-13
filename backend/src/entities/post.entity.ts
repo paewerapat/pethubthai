@@ -27,6 +27,12 @@ export enum PostStatus {
   LOST = 'lost',
   FOUND = 'found',
   ADOPTED = 'adopted',
+  AVAILABLE = 'available',
+}
+
+export enum PostCategory {
+  LOST = 'lost',
+  ADOPTION = 'adoption',
 }
 
 export enum PosterRelation {
@@ -70,7 +76,14 @@ export class Post {
   })
   status: PostStatus;
 
-  @Column({ type: 'date', name: 'lost_date' })
+  @Column({
+    type: 'enum',
+    enum: PostCategory,
+    default: PostCategory.LOST,
+  })
+  category: PostCategory;
+
+  @Column({ type: 'date', name: 'lost_date', nullable: true })
   lostDate: Date;
 
   @Column({ name: 'lost_location' })

@@ -35,6 +35,7 @@ export class PostsController {
     @Query('province') province?: string,
     @Query('amphoe') amphoe?: string,
     @Query('tambon') tambon?: string,
+    @Query('category') category?: string,
   ) {
     return this.postsService.findAll(
       page ? parseInt(page) : 1,
@@ -44,6 +45,7 @@ export class PostsController {
       province,
       amphoe,
       tambon,
+      category,
     );
   }
 

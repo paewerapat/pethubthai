@@ -30,6 +30,7 @@ export default function Header() {
   const navItems = [
     { href: '/', label: 'กลับบ้าน' },
     { href: '/posts', label: 'ตามหาน้อง' },
+    { href: '/adopt', label: 'หาบ้านให้น้อง' },
   ];
 
   return (

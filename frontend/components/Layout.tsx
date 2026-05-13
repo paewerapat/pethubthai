@@ -21,7 +21,7 @@ export default function Layout({ children }: LayoutProps) {
                 <img
                   src="/images/logo-width-transparent.png"
                   alt="PetHub Thai"
-                  className="h-10 w-auto"
+                  className="h-16 w-auto"
                 />
               </Link>
               <p className="text-sm text-gray-600 leading-relaxed">
@@ -37,6 +37,7 @@ export default function Layout({ children }: LayoutProps) {
                 <li><Link href="/" className="text-gray-600 hover:text-[#5fca9f] transition-colors">กลับบ้าน</Link></li>
                 <li><Link href="/posts" className="text-gray-600 hover:text-[#5fca9f] transition-colors">ตามหาน้อง</Link></li>
                 <li><Link href="/post/create" className="text-gray-600 hover:text-[#5fca9f] transition-colors">โพสต์ตามหา</Link></li>
+                <li><Link href="/adopt" className="text-gray-600 hover:text-[#5fca9f] transition-colors">หาบ้านให้น้อง</Link></li>
                 <li><Link href="/login" className="text-gray-600 hover:text-[#5fca9f] transition-colors">เข้าสู่ระบบ</Link></li>
               </ul>
             </div>

@@ -51,6 +51,7 @@ export class PostsService {
     province?: string,
     amphoe?: string,
     tambon?: string,
+    category?: string,
   ): Promise<{ data: Post[]; total: number; page: number; limit: number }> {
     const query = this.postRepository
       .createQueryBuilder('post')
@@ -64,6 +65,12 @@ export class PostsService {
 
     if (petType) {
       query.andWhere('post.petType = :petType', { petType });
+    }
+
+    if (category) {
+      query.andWhere('post.category = :category', { category });
+    } else {
+      query.andWhere('post.category = :category', { category: 'lost' });
     }
 
     if (tambon) {

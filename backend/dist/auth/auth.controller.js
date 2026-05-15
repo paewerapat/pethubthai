@@ -46,6 +46,12 @@ let AuthController = class AuthController {
         const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
         res.redirect(`${frontend}/auth/callback?token=${token}`);
     }
+    lineLogin() { }
+    lineCallback(req, res) {
+        const token = this.authService.generateToken(req.user);
+        const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
+        res.redirect(`${frontend}/auth/callback?token=${token}`);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -102,6 +108,22 @@ __decorate([
     __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "facebookCallback", null);
+__decorate([
+    (0, common_1.Get)('line'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('line')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "lineLogin", null);
+__decorate([
+    (0, common_1.Get)('line/callback'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('line')),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "lineCallback", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

@@ -38,4 +38,6 @@ export declare class AuthController {
     googleCallback(req: any, res: Response): void;
     facebookAuth(): void;
     facebookCallback(req: any, res: Response): void;
+    lineLogin(): void;
+    lineCallback(req: any, res: Response): void;
 }

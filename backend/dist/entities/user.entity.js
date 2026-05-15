@@ -17,6 +17,7 @@ var AuthProvider;
     AuthProvider["LOCAL"] = "local";
     AuthProvider["GOOGLE"] = "google";
     AuthProvider["FACEBOOK"] = "facebook";
+    AuthProvider["LINE"] = "line";
 })(AuthProvider || (exports.AuthProvider = AuthProvider = {}));
 let User = class User {
     id;

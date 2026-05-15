@@ -60,4 +60,16 @@ export class AuthController {
     const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
     res.redirect(`${frontend}/auth/callback?token=${token}`);
   }
+
+  @Get('line')
+  @UseGuards(AuthGuard('line'))
+  lineLogin() {}
+
+  @Get('line/callback')
+  @UseGuards(AuthGuard('line'))
+  lineCallback(@Request() req, @Res() res: Response) {
+    const token = this.authService.generateToken(req.user);
+    const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
+    res.redirect(`${frontend}/auth/callback?token=${token}`);
+  }
 }

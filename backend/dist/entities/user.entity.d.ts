@@ -2,7 +2,8 @@ import { Post } from './post.entity';
 export declare enum AuthProvider {
     LOCAL = "local",
     GOOGLE = "google",
-    FACEBOOK = "facebook"
+    FACEBOOK = "facebook",
+    LINE = "line"
 }
 export declare class User {
     id: string;

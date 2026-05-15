@@ -1,6 +1,6 @@
 'use client';
 
-import { FaGoogle, FaFacebook } from 'react-icons/fa';
+import { FaGoogle, FaFacebook, FaLine } from 'react-icons/fa';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 export default function SocialLoginButtons({ redirect = '/' }: Props) {
-  function startOAuth(provider: 'google' | 'facebook') {
+  function startOAuth(provider: 'google' | 'facebook' | 'line') {
     if (typeof window !== 'undefined') {
       localStorage.setItem('oauth_redirect', redirect);
     }
@@ -34,6 +34,15 @@ export default function SocialLoginButtons({ redirect = '/' }: Props) {
       >
         <FaFacebook className="w-5 h-5 text-[#1877F2]" />
         เข้าสู่ระบบด้วย Facebook
+      </button>
+
+      <button
+        type="button"
+        onClick={() => startOAuth('line')}
+        className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-[#06C755]/30 bg-[#06C755] text-white font-medium text-base hover:bg-[#05b34d] active:scale-95 transition-all duration-200 shadow-sm"
+      >
+        <FaLine className="w-5 h-5" />
+        เข้าสู่ระบบด้วย LINE
       </button>
     </div>
   );

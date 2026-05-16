@@ -5,6 +5,15 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth.service';
 import { AuthProvider } from '../../entities/user.entity';
 
+// LINE requires `state` param. Without sessions we use a stateless store:
+// generates a random state for the redirect, always verifies as valid on callback.
+const statelessStore = {
+  store: (_req: any, cb: (err: any, state: string) => void) =>
+    cb(null, Math.random().toString(36).slice(2)),
+  verify: (_req: any, _state: string, cb: (err: any, valid: boolean) => void) =>
+    cb(null, true),
+};
+
 @Injectable()
 export class LineStrategy extends PassportStrategy(Strategy, 'line') {
   constructor(
@@ -18,6 +27,7 @@ export class LineStrategy extends PassportStrategy(Strategy, 'line') {
       clientSecret: configService.get<string>('LINE_CHANNEL_SECRET') as string,
       callbackURL: configService.get<string>('LINE_CALLBACK_URL'),
       scope: ['profile', 'openid', 'email'],
+      store: statelessStore,
     });
   }
 

@@ -31,16 +31,16 @@ let LineStrategy = class LineStrategy extends (0, passport_1.PassportStrategy)(p
         this.configService = configService;
         this.authService = authService;
     }
-    async validate(accessToken, _refreshToken, params, done) {
+    async validate(accessToken, _refreshToken, tokenParams, _profile, done) {
         try {
             const res = await fetch('https://api.line.me/v2/profile', {
                 headers: { Authorization: `Bearer ${accessToken}` },
             });
             const profile = (await res.json());
             let email = null;
-            if (params?.id_token) {
+            if (tokenParams?.id_token) {
                 try {
-                    const payload = JSON.parse(Buffer.from(params.id_token.split('.')[1], 'base64url').toString());
+                    const payload = JSON.parse(Buffer.from(tokenParams.id_token.split('.')[1], 'base64url').toString());
                     email = payload.email ?? null;
                 }
                 catch { }

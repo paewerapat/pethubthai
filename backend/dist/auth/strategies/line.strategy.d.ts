@@ -7,6 +7,6 @@ export declare class LineStrategy extends LineStrategy_base {
     private configService;
     private authService;
     constructor(configService: ConfigService, authService: AuthService);
-    validate(accessToken: string, _refreshToken: string, params: any, done: (err: any, user?: any) => void): Promise<void>;
+    validate(accessToken: string, _refreshToken: string, tokenParams: any, _profile: any, done: (err: any, user?: any) => void): Promise<void>;
 }
 export {};

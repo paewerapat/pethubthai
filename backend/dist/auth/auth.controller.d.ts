@@ -39,5 +39,5 @@ export declare class AuthController {
     facebookAuth(): void;
     facebookCallback(req: any, res: Response): void;
     lineLogin(): void;
-    lineCallback(req: any, res: Response): void;
+    lineCallback(req: any, res: Response): Promise<void>;
 }

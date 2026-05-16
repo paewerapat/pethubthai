@@ -17,6 +17,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       callbackURL: configService.get<string>('FACEBOOK_CALLBACK_URL') as string,
       scope: ['email'],
       profileFields: ['id', 'displayName', 'emails', 'photos'],
+      enableProof: true,
     });
   }
 
@@ -24,19 +25,16 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     _accessToken: string,
     _refreshToken: string,
     profile: Profile,
-    done: (err: any, user?: any) => void,
-  ) {
+  ): Promise<any> {
     const email = profile.emails?.[0]?.value ?? `${profile.id}@facebook.com`;
     const avatar = profile.photos?.[0]?.value;
 
-    const user = await this.authService.findOrCreateOAuthUser(
+    return this.authService.findOrCreateOAuthUser(
       AuthProvider.FACEBOOK,
       profile.id,
       email,
       profile.displayName,
       avatar,
     );
-
-    done(null, user);
   }
 }

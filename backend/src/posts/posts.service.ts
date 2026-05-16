@@ -5,6 +5,8 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as fs from 'fs';
+import * as path from 'path';
 import { Post } from '../entities/post.entity';
 import { PostImage } from '../entities/post-image.entity';
 import { User } from '../entities/user.entity';
@@ -19,6 +21,15 @@ export class PostsService {
     @InjectRepository(PostImage)
     private postImageRepository: Repository<PostImage>,
   ) {}
+
+  private deleteImageFile(imageUrl: string): void {
+    try {
+      const filename = imageUrl.split('/uploads/')[1];
+      if (!filename) return;
+      const filePath = path.join(process.cwd(), 'uploads', filename);
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    } catch {}
+  }
 
   async create(createPostDto: CreatePostDto, user: User): Promise<Post> {
     const { images, ...postData } = createPostDto;
@@ -127,14 +138,16 @@ export class PostsService {
     await this.postRepository.save(post);
 
     if (images) {
+      const oldImages = await this.postImageRepository.find({ where: { postId: id } });
+      const newUrls = new Set(images.map((img) => img.imageUrl));
+      const toDelete = oldImages.filter((img) => !newUrls.has(img.imageUrl));
+
       await this.postImageRepository.delete({ postId: id });
+      toDelete.forEach((img) => this.deleteImageFile(img.imageUrl));
 
       if (images.length > 0) {
         const postImages = images.map((img) =>
-          this.postImageRepository.create({
-            ...img,
-            postId: id,
-          }),
+          this.postImageRepository.create({ ...img, postId: id }),
         );
         await this.postImageRepository.save(postImages);
       }
@@ -150,6 +163,7 @@ export class PostsService {
       throw new ForbiddenException('You can only delete your own posts');
     }
 
+    post.images?.forEach((img) => this.deleteImageFile(img.imageUrl));
     await this.postRepository.remove(post);
   }
 

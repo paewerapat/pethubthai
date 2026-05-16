@@ -10,6 +10,7 @@ import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import Layout from '@/components/Layout';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
 import { login, setToken } from '@/lib/api';
+import { toast } from 'sonner';
 
 const schema = z.object({
   email: z.string().email('อีเมลไม่ถูกต้อง'),
@@ -36,10 +37,13 @@ function LoginForm() {
     try {
       const res = await login(data.email, data.password);
       setToken(res.access_token);
+      toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ!');
       router.push(redirect);
     } catch (err: any) {
       const msg = err?.response?.data?.message ?? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-      setError(Array.isArray(msg) ? msg.join(', ') : msg);
+      const text = Array.isArray(msg) ? msg.join(', ') : msg;
+      setError(text);
+      toast.error(text);
     }
   }
 

@@ -1,10 +1,43 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
@@ -16,6 +49,8 @@ exports.PostsService = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
 const post_entity_1 = require("../entities/post.entity");
 const post_image_entity_1 = require("../entities/post-image.entity");
 let PostsService = class PostsService {
@@ -24,6 +59,17 @@ let PostsService = class PostsService {
     constructor(postRepository, postImageRepository) {
         this.postRepository = postRepository;
         this.postImageRepository = postImageRepository;
+    }
+    deleteImageFile(imageUrl) {
+        try {
+            const filename = imageUrl.split('/uploads/')[1];
+            if (!filename)
+                return;
+            const filePath = path.join(process.cwd(), 'uploads', filename);
+            if (fs.existsSync(filePath))
+                fs.unlinkSync(filePath);
+        }
+        catch { }
     }
     async create(createPostDto, user) {
         const { images, ...postData } = createPostDto;
@@ -99,12 +145,13 @@ let PostsService = class PostsService {
         Object.assign(post, postData);
         await this.postRepository.save(post);
         if (images) {
+            const oldImages = await this.postImageRepository.find({ where: { postId: id } });
+            const newUrls = new Set(images.map((img) => img.imageUrl));
+            const toDelete = oldImages.filter((img) => !newUrls.has(img.imageUrl));
             await this.postImageRepository.delete({ postId: id });
+            toDelete.forEach((img) => this.deleteImageFile(img.imageUrl));
             if (images.length > 0) {
-                const postImages = images.map((img) => this.postImageRepository.create({
-                    ...img,
-                    postId: id,
-                }));
+                const postImages = images.map((img) => this.postImageRepository.create({ ...img, postId: id }));
                 await this.postImageRepository.save(postImages);
             }
         }
@@ -115,6 +162,7 @@ let PostsService = class PostsService {
         if (post.userId !== user.id) {
             throw new common_1.ForbiddenException('You can only delete your own posts');
         }
+        post.images?.forEach((img) => this.deleteImageFile(img.imageUrl));
         await this.postRepository.remove(post);
     }
     async incrementView(id) {

@@ -10,8 +10,12 @@ function AuthCallbackInner() {
 
   useEffect(() => {
     const token = searchParams.get('token');
+    const error = searchParams.get('error');
     if (token) {
       setToken(token);
+      sessionStorage.setItem('pending_toast', JSON.stringify({ type: 'success', msg: 'เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ!' }));
+    } else if (error) {
+      sessionStorage.setItem('pending_toast', JSON.stringify({ type: 'error', msg: 'เข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่' }));
     }
     const redirect =
       (typeof window !== 'undefined' && localStorage.getItem('oauth_redirect')) || '/';

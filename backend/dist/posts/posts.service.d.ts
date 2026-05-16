@@ -8,6 +8,7 @@ export declare class PostsService {
     private postRepository;
     private postImageRepository;
     constructor(postRepository: Repository<Post>, postImageRepository: Repository<PostImage>);
+    private deleteImageFile;
     create(createPostDto: CreatePostDto, user: User): Promise<Post>;
     findAll(page?: number, limit?: number, status?: string, petType?: string, province?: string, amphoe?: string, tambon?: string, category?: string): Promise<{
         data: Post[];

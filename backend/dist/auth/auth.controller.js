@@ -11,10 +11,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
+const passport_2 = __importDefault(require("passport"));
 const auth_service_1 = require("./auth.service");
 const register_dto_1 = require("./dto/register.dto");
 const login_dto_1 = require("./dto/login.dto");
@@ -47,10 +51,29 @@ let AuthController = class AuthController {
         res.redirect(`${frontend}/auth/callback?token=${token}`);
     }
     lineLogin() { }
-    lineCallback(req, res) {
-        const token = this.authService.generateToken(req.user);
+    async lineCallback(req, res) {
         const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
-        res.redirect(`${frontend}/auth/callback?token=${token}`);
+        await new Promise((resolve) => {
+            passport_2.default.authenticate('line', (err, user) => {
+                if (err || !user) {
+                    console.error('[LINE] callback error:', err?.message ?? 'no user');
+                    res.redirect(`${frontend}/auth/callback?error=line_failed`);
+                    return resolve();
+                }
+                try {
+                    const token = this.authService.generateToken(user);
+                    res.redirect(`${frontend}/auth/callback?token=${token}`);
+                }
+                catch (e) {
+                    console.error('[LINE] token error:', e?.message);
+                    res.redirect(`${frontend}/auth/callback?error=line_failed`);
+                }
+                resolve();
+            })(req, res, () => {
+                res.redirect(`${frontend}/auth/callback?error=line_failed`);
+                resolve();
+            });
+        });
     }
 };
 exports.AuthController = AuthController;
@@ -117,12 +140,11 @@ __decorate([
 ], AuthController.prototype, "lineLogin", null);
 __decorate([
     (0, common_1.Get)('line/callback'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('line')),
     __param(0, (0, common_1.Request)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AuthController.prototype, "lineCallback", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),

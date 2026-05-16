@@ -10,6 +10,7 @@ import { FiMail, FiLock, FiUser, FiEye, FiEyeOff } from 'react-icons/fi';
 import Layout from '@/components/Layout';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
 import { register as registerApi, setToken } from '@/lib/api';
+import { toast } from 'sonner';
 
 const schema = z
   .object({
@@ -44,10 +45,13 @@ function RegisterForm() {
     try {
       const res = await registerApi(data.name, data.email, data.password);
       setToken(res.access_token);
+      toast.success('สมัครสมาชิกสำเร็จ ยินดีต้อนรับสู่ PetHub Thai!');
       router.push(redirect);
     } catch (err: any) {
       const msg = err?.response?.data?.message ?? 'สมัครสมาชิกไม่สำเร็จ กรุณาลองใหม่';
-      setError(Array.isArray(msg) ? msg.join(', ') : msg);
+      const text = Array.isArray(msg) ? msg.join(', ') : msg;
+      setError(text);
+      toast.error(text);
     }
   }
 

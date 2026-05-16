@@ -29,11 +29,10 @@ let GoogleStrategy = class GoogleStrategy extends (0, passport_1.PassportStrateg
         this.configService = configService;
         this.authService = authService;
     }
-    async validate(_accessToken, _refreshToken, profile, done) {
+    async validate(_accessToken, _refreshToken, profile) {
         const email = profile.emails?.[0]?.value ?? `${profile.id}@google.com`;
         const avatar = profile.photos?.[0]?.value;
-        const user = await this.authService.findOrCreateOAuthUser(user_entity_1.AuthProvider.GOOGLE, profile.id, email, profile.displayName, avatar);
-        done(null, user);
+        return this.authService.findOrCreateOAuthUser(user_entity_1.AuthProvider.GOOGLE, profile.id, email, profile.displayName, avatar);
     }
 };
 exports.GoogleStrategy = GoogleStrategy;

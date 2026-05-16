@@ -3,14 +3,16 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FiUser, FiLogOut, FiChevronDown } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiChevronDown, FiSearch, FiHome } from 'react-icons/fi';
 import { getToken, clearToken, getMe, type AuthUser } from '@/lib/api';
+import { toast } from 'sonner';
 
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [postMenuOpen, setPostMenuOpen] = useState(false);
 
   useEffect(() => {
     if (getToken()) {
@@ -18,12 +20,23 @@ export default function Header() {
         .then(setUser)
         .catch(() => clearToken());
     }
+
+    const raw = sessionStorage.getItem('pending_toast');
+    if (raw) {
+      sessionStorage.removeItem('pending_toast');
+      try {
+        const { type, msg } = JSON.parse(raw);
+        if (type === 'success') toast.success(msg);
+        else toast.error(msg);
+      } catch {}
+    }
   }, [pathname]);
 
   function handleLogout() {
     clearToken();
     setUser(null);
     setDropdownOpen(false);
+    toast.success('ออกจากระบบเรียบร้อยแล้ว');
     router.push('/');
   }
 
@@ -113,12 +126,41 @@ export default function Header() {
               </Link>
             )}
 
-            <Link href="/post/create" className="btn-primary text-base">
-              <span>โพสต์ตามหา</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </Link>
+            <div className="relative">
+              <button
+                onClick={() => setPostMenuOpen((o) => !o)}
+                className="btn-primary text-base"
+              >
+                <span>เพิ่มโพสต์</span>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </button>
+
+              {postMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setPostMenuOpen(false)} />
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-20">
+                    <Link
+                      href="/post/create"
+                      onClick={() => setPostMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <FiSearch className="w-4 h-4 text-[#5fca9f]" />
+                      โพสต์ตามหาน้อง
+                    </Link>
+                    <Link
+                      href="/adopt/create"
+                      onClick={() => setPostMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <FiHome className="w-4 h-4 text-[#5fca9f]" />
+                      ลงประกาศหาบ้านให้น้อง
+                    </Link>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}

@@ -16,6 +16,10 @@ const passport_oauth2_1 = require("passport-oauth2");
 const config_1 = require("@nestjs/config");
 const auth_service_1 = require("../auth.service");
 const user_entity_1 = require("../../entities/user.entity");
+const statelessStore = {
+    store: (_req, cb) => cb(null, Math.random().toString(36).slice(2)),
+    verify: (_req, _state, cb) => cb(null, true),
+};
 let LineStrategy = class LineStrategy extends (0, passport_1.PassportStrategy)(passport_oauth2_1.Strategy, 'line') {
     configService;
     authService;
@@ -27,31 +31,26 @@ let LineStrategy = class LineStrategy extends (0, passport_1.PassportStrategy)(p
             clientSecret: configService.get('LINE_CHANNEL_SECRET'),
             callbackURL: configService.get('LINE_CALLBACK_URL'),
             scope: ['profile', 'openid', 'email'],
+            store: statelessStore,
         });
         this.configService = configService;
         this.authService = authService;
     }
-    async validate(accessToken, _refreshToken, tokenParams, _profile, done) {
-        try {
-            const res = await fetch('https://api.line.me/v2/profile', {
-                headers: { Authorization: `Bearer ${accessToken}` },
-            });
-            const profile = (await res.json());
-            let email = null;
-            if (tokenParams?.id_token) {
-                try {
-                    const payload = JSON.parse(Buffer.from(tokenParams.id_token.split('.')[1], 'base64url').toString());
-                    email = payload.email ?? null;
-                }
-                catch { }
+    async validate(accessToken, _refreshToken, tokenParams, _profile) {
+        const res = await fetch('https://api.line.me/v2/profile', {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        const lineProfile = (await res.json());
+        let email = null;
+        if (tokenParams?.id_token) {
+            try {
+                const payload = JSON.parse(Buffer.from(tokenParams.id_token.split('.')[1], 'base64url').toString());
+                email = payload.email ?? null;
             }
-            const finalEmail = email ?? `line_${profile.userId}@pethubthai.com`;
-            const user = await this.authService.findOrCreateOAuthUser(user_entity_1.AuthProvider.LINE, profile.userId, finalEmail, profile.displayName, profile.pictureUrl);
-            done(null, user);
+            catch { }
         }
-        catch (err) {
-            done(err);
-        }
+        const finalEmail = email ?? `line_${lineProfile.userId}@pethubthai.com`;
+        return this.authService.findOrCreateOAuthUser(user_entity_1.AuthProvider.LINE, lineProfile.userId, finalEmail, lineProfile.displayName, lineProfile.pictureUrl);
     }
 };
 exports.LineStrategy = LineStrategy;

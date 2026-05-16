@@ -8,6 +8,6 @@ export declare class FacebookStrategy extends FacebookStrategy_base {
     private configService;
     private authService;
     constructor(configService: ConfigService, authService: AuthService);
-    validate(_accessToken: string, _refreshToken: string, profile: Profile, done: (err: any, user?: any) => void): Promise<void>;
+    validate(_accessToken: string, _refreshToken: string, profile: Profile): Promise<any>;
 }
 export {};

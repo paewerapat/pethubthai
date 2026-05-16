@@ -8,6 +8,7 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import passport from 'passport';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -66,10 +67,28 @@ export class AuthController {
   lineLogin() {}
 
   @Get('line/callback')
-  @UseGuards(AuthGuard('line'))
-  lineCallback(@Request() req, @Res() res: Response) {
-    const token = this.authService.generateToken(req.user);
+  async lineCallback(@Request() req, @Res() res: Response) {
     const frontend = process.env.FRONTEND_URL || 'http://localhost:3000';
-    res.redirect(`${frontend}/auth/callback?token=${token}`);
+
+    await new Promise<void>((resolve) => {
+      (passport.authenticate('line', (err: any, user: any) => {
+        if (err || !user) {
+          console.error('[LINE] callback error:', err?.message ?? 'no user');
+          res.redirect(`${frontend}/auth/callback?error=line_failed`);
+          return resolve();
+        }
+        try {
+          const token = this.authService.generateToken(user);
+          res.redirect(`${frontend}/auth/callback?token=${token}`);
+        } catch (e) {
+          console.error('[LINE] token error:', (e as Error)?.message);
+          res.redirect(`${frontend}/auth/callback?error=line_failed`);
+        }
+        resolve();
+      }) as any)(req, res, () => {
+        res.redirect(`${frontend}/auth/callback?error=line_failed`);
+        resolve();
+      });
+    });
   }
 }

@@ -57,7 +57,7 @@ export default function PostDetailClient({ post }: { post: Post }) {
   }
 
   function shareToFacebook() {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`, '_blank', 'width=600,height=400');
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
   }
 
   function shareToTwitter() {
@@ -65,7 +65,7 @@ export default function PostDetailClient({ post }: { post: Post }) {
   }
 
   function shareToLine() {
-    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(postUrl)}`, '_blank', 'width=600,height=400');
+    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
   }
 
   async function copyLink() {

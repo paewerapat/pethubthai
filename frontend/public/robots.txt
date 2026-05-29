@@ -1,0 +1,6 @@
+User-agent: facebookexternalhit
+Allow: /
+
+# Default rule: allow all crawlers
+User-agent: *
+Disallow:

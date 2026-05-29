@@ -21,7 +21,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!post) return { title: 'ไม่พบประกาศ' };
 
   const petLabel = post.petType === 'dog' ? 'สุนัข' : post.petType === 'cat' ? 'แมว' : 'สัตว์เลี้ยง';
-  const title = `ตามหา${petLabel} "${post.petName}"`;
+  const title = post.lostLocation
+    ? `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation}`
+    : `ตามหา${petLabel} "${post.petName}"`;
   const description = post.description
     ? post.description.slice(0, 120)
     : `ตามหา${petLabel}ชื่อ ${post.petName} หายบริเวณ ${post.lostLocation}`;

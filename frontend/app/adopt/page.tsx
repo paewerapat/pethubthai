@@ -1,9 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import dynamic from 'next/dynamic';
 import Layout from '@/components/Layout';
 import PostCard from '@/components/PostCard';
 import { fetchPosts, type Post } from '@/lib/api';
+import { FiGrid, FiMap } from 'react-icons/fi';
+
+const MapAllPosts = dynamic(() => import('@/components/MapAllPosts'), { ssr: false });
 
 const GEO_URL =
   'https://raw.githubusercontent.com/thailand-geography-data/thailand-geography-json/main/src/geography.json';
@@ -36,6 +40,9 @@ export default function AdoptPage() {
   const [tambon, setTambon] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const [mapPosts, setMapPosts] = useState<Post[]>([]);
+  const [mapLoading, setMapLoading] = useState(false);
 
   const [geoData, setGeoData] = useState<GeoEntry[]>([]);
   const [geoLoading, setGeoLoading] = useState(true);
@@ -82,6 +89,29 @@ export default function AdoptPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const loadMapPosts = useCallback(async () => {
+    if (viewMode !== 'map') return;
+    setMapLoading(true);
+    try {
+      const res = await fetchPosts({
+        limit: 500,
+        petType: petType || undefined,
+        category: 'adoption',
+        status: 'available',
+        province: province || undefined,
+        amphoe: amphoe || undefined,
+        tambon: tambon || undefined,
+      });
+      setMapPosts(res.data);
+    } catch {
+      // silently fail
+    } finally {
+      setMapLoading(false);
+    }
+  }, [viewMode, petType, province, amphoe, tambon]);
+
+  useEffect(() => { loadMapPosts(); }, [loadMapPosts]);
+
   function changeProvince(val: string) { setPage(1); setProvince(val); setAmphoe(''); setTambon(''); }
   function changeAmphoe(val: string) { setPage(1); setAmphoe(val); setTambon(''); }
   function changeTambon(val: string) { setPage(1); setTambon(val); }
@@ -94,11 +124,37 @@ export default function AdoptPage() {
     <Layout>
       <div className="container mx-auto px-6 py-10">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-1">หาบ้านให้น้อง 🏡</h1>
-          <p className="text-gray-500">
-            {loading ? 'กำลังโหลด...' : `น้องที่รอบ้านใหม่ ${total.toLocaleString()} ตัว`}
-          </p>
+        <div className="flex items-start justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800 mb-1">หาบ้านให้น้อง 🏡</h1>
+            <p className="text-gray-500">
+              {loading ? 'กำลังโหลด...' : `น้องที่รอบ้านใหม่ ${total.toLocaleString()} ตัว`}
+            </p>
+          </div>
+          <div className="flex items-center bg-gray-100 rounded-xl p-1 shrink-0">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === 'grid'
+                  ? 'bg-white text-gray-800 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <FiGrid className="w-4 h-4" />
+              รายการ
+            </button>
+            <button
+              onClick={() => setViewMode('map')}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                viewMode === 'map'
+                  ? 'bg-white text-gray-800 shadow-sm'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              <FiMap className="w-4 h-4" />
+              แผนที่
+            </button>
+          </div>
         </div>
 
         {/* Filters */}
@@ -168,7 +224,13 @@ export default function AdoptPage() {
         </div>
 
         {/* Content */}
-        {error ? (
+        {viewMode === 'map' ? (
+          mapLoading ? (
+            <div className="h-[480px] rounded-2xl bg-gray-100 animate-pulse" />
+          ) : (
+            <MapAllPosts posts={mapPosts} />
+          )
+        ) : error ? (
           <div className="text-center py-20">
             <p className="text-red-400 mb-4">{error}</p>
             <button onClick={load} className="btn-primary">ลองใหม่</button>
@@ -204,7 +266,7 @@ export default function AdoptPage() {
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {viewMode === 'grid' && totalPages > 1 && (
           <div className="flex justify-center items-center gap-2 mt-12">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}

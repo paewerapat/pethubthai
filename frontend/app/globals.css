@@ -4,6 +4,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Custom cursor — only on desktop mouse devices */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 body {
   background: linear-gradient(135deg, #e8f8f0 0%, #e8f4f8 50%, #fef0f5 100%);
   background-attachment: fixed;

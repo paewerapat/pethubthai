@@ -6,9 +6,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import Layout from '@/components/Layout';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
+import FloatingPets from '@/components/FloatingPets';
 import { login, setToken } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -144,16 +146,35 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Layout>
-      <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <img src="/images/logo-width-transparent.png" alt="PetHub Thai" className="h-16 w-auto mx-auto mb-4" />
+      <div className="relative min-h-[80vh] flex items-center justify-center px-6 py-16 overflow-hidden">
+        <FloatingPets variant="login" />
+        <div className="w-full max-w-md relative z-10">
+          <motion.div
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: -24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: 'easeOut' }}
+          >
+            <motion.img
+              src="/images/logo-width-transparent.png"
+              alt="PetHub Thai"
+              className="h-16 w-auto mx-auto mb-4"
+              initial={{ scale: 0.7, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 0.1 }}
+            />
             <h1 className="text-3xl font-bold text-gray-800">เข้าสู่ระบบ</h1>
             <p className="text-gray-500 mt-2">ยินดีต้อนรับกลับมา PetHub Thai</p>
-          </div>
-          <Suspense fallback={<div className="card animate-pulse h-64" />}>
-            <LoginForm />
-          </Suspense>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+          >
+            <Suspense fallback={<div className="card animate-pulse h-64" />}>
+              <LoginForm />
+            </Suspense>
+          </motion.div>
         </div>
       </div>
     </Layout>

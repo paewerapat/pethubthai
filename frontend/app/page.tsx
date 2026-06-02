@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
 import PostCard from '@/components/PostCard';
+import FloatingPets from '@/components/FloatingPets';
 import type { Post, PostsResponse } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api';
@@ -45,6 +46,7 @@ export default async function Home() {
     <Layout>
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-28">
+        <FloatingPets />
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
             {/* Left Content */}

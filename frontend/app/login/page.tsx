@@ -11,6 +11,7 @@ import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import Layout from '@/components/Layout';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
 import FloatingPets from '@/components/FloatingPets';
+import LottieCat from '@/components/LottieCat';
 import { login, setToken } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -125,7 +126,10 @@ function LoginForm() {
               กำลังเข้าสู่ระบบ...
             </>
           ) : (
-            'เข้าสู่ระบบ'
+            <>
+              <LottieCat width={48} cropBottom={20} />
+              เข้าสู่ระบบ
+            </>
           )}
         </button>
       </form>

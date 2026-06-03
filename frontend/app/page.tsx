@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import PostCard from '@/components/PostCard';
 import FloatingPets from '@/components/FloatingPets';
+import LottieCat from '@/components/LottieCat';
 import type { Post, PostsResponse } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api';
@@ -48,10 +49,11 @@ export default async function Home() {
       <section className="relative overflow-hidden py-20 lg:py-28">
         <FloatingPets />
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">
             {/* Left Content */}
             <div className="flex-1 space-y-8 text-center lg:text-left">
               <div className="space-y-4">
+                <LottieCat className="mx-auto lg:mx-0 pointer-events-none" width={650} cropTop={134} cropBottom={194} />
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight">
                   ช่วยกันตามหา
                   <br />
@@ -98,7 +100,7 @@ export default async function Home() {
             </div>
 
             {/* Right Content — Latest Posts */}
-            <div className="flex-1 w-full max-w-md lg:max-w-lg">
+            <div className="flex-1 w-full max-w-lg lg:max-w-2xl">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-gray-800">ประกาศล่าสุด</h3>
                 <Link href="/posts" className="text-[#5fca9f] hover:text-[#4db889] text-sm font-medium flex items-center gap-1">
@@ -124,6 +126,7 @@ export default async function Home() {
             </div>
           </div>
         </div>
+
       </section>
 
       {/* Features Section */}

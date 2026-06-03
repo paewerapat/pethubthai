@@ -4,6 +4,15 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Paw prints marquee */
+@keyframes paw-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.paw-marquee {
+  animation: paw-scroll 18s linear infinite;
+}
+
 /* Custom cursor — only on desktop mouse devices */
 @media (hover: hover) and (pointer: fine) {
   *, *::before, *::after {

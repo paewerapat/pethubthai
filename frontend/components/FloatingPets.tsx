@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 const HERO_PETS = [
@@ -25,6 +26,10 @@ interface Props {
 }
 
 export default function FloatingPets({ variant = 'hero' }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+
   const pets = variant === 'login' ? LOGIN_PETS : HERO_PETS;
 
   return (
@@ -34,9 +39,8 @@ export default function FloatingPets({ variant = 'hero' }: Props) {
           key={i}
           className="absolute select-none leading-none"
           style={{ left: p.left, top: p.top, fontSize: p.size }}
-          initial={{ opacity: 0 }}
           animate={{
-            opacity: [0.1, 0.18, 0.1, 0.15, 0.1],
+            opacity: [0.35, 0.55, 0.35, 0.45, 0.35],
             y: [0, p.dy[0], p.dy[1], p.dy[0] / 2, 0],
             x: [0, p.dx[0], p.dx[1], p.dx[0] / 2, 0],
             rotate: [0, 6, -5, 3, 0],

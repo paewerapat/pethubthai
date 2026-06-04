@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FaFacebook } from 'react-icons/fa6';
 import Header from './Header';
 
 interface LayoutProps {
@@ -61,6 +62,17 @@ export default function Layout({ children }: LayoutProps) {
                   <span>📧</span>
                   <a href="mailto:pethubth@gmail.com" className="hover:text-[#5fca9f] transition-colors">
                     pethubth@gmail.com
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.facebook.com/pethubthailand"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-[#1877F2] hover:text-[#166fe5] transition-colors font-medium"
+                  >
+                    <FaFacebook className="w-4 h-4 shrink-0" />
+                    PetHub Thailand
                   </a>
                 </li>
               </ul>

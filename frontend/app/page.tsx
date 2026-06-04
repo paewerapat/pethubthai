@@ -39,7 +39,7 @@ export default async function Home() {
 
   const statCards = [
     { number: stats.total.toLocaleString(), label: 'ประกาศทั้งหมด', icon: '📋' },
-    { number: stats.found.toLocaleString(), label: 'พบตัวแล้ว', icon: '✅' },
+    { number: stats.found.toLocaleString(), label: 'เจอน้องแล้ว', icon: '✅' },
     { number: 'ฟรี', label: 'ไม่มีค่าใช้จ่าย', icon: '🎉' },
   ];
 
@@ -105,7 +105,7 @@ export default async function Home() {
             {/* Right Content — Latest Posts */}
             <div className="flex-1 w-full max-w-lg lg:max-w-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-800">ประกาศล่าสุด</h3>
+                <h3 className="text-2xl font-bold text-gray-800">ประกาศหายล่าสุด</h3>
                 <Link href="/posts" className="text-[#5fca9f] hover:text-[#4db889] text-sm font-medium flex items-center gap-1">
                   ดูทั้งหมด
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

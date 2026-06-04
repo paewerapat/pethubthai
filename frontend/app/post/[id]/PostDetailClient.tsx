@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Layout from '@/components/Layout';
-import { getToken, getMe, deletePost, trackPostView, type Post, type AuthUser } from '@/lib/api';
+import { getToken, getMe, deletePost, updatePostStatus, trackPostView, type Post, type AuthUser } from '@/lib/api';
+import { toast } from 'sonner';
 import { PET_META, STATUS_META, GENDER_LABEL, relativeTime } from '@/lib/utils';
 import {
   FiPhone, FiMapPin, FiCalendar, FiUser, FiArrowLeft,
@@ -26,6 +27,8 @@ export default function PostDetailClient({ post }: { post: Post }) {
   const [deleting, setDeleting] = useState(false);
   const [copied, setCopied] = useState(false);
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [currentStatus, setCurrentStatus] = useState(post.status);
+  const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
     if (getToken()) {
@@ -81,8 +84,35 @@ export default function PostDetailClient({ post }: { post: Post }) {
     }
   }
 
+  const isActionable = isOwner && (currentStatus === 'lost' || currentStatus === 'available');
+  const resolvedStatus = currentStatus === 'lost' ? 'found' : 'adopted';
+  const actionLabel = currentStatus === 'lost' ? '🎉 เจอน้องแล้ว!' : '🏡 น้องได้บ้านแล้ว!';
+  const confirmMsg  = currentStatus === 'lost' ? 'ยืนยันว่าเจอน้องแล้ว?' : 'ยืนยันว่าน้องได้บ้านแล้ว?';
+
+  async function handleResolved() {
+    toast(confirmMsg, {
+      duration: 8000,
+      action: {
+        label: '✓ ยืนยัน',
+        onClick: async () => {
+          setConfirming(true);
+          try {
+            await updatePostStatus(post.id, resolvedStatus as 'found' | 'adopted');
+            setCurrentStatus(resolvedStatus);
+            toast.success(currentStatus === 'lost' ? 'ยินดีด้วย! น้องกลับบ้านแล้ว 🎉' : 'น้องได้บ้านใหม่แล้ว 🏡');
+          } catch {
+            toast.error('เกิดข้อผิดพลาด กรุณาลองใหม่');
+          } finally {
+            setConfirming(false);
+          }
+        },
+      },
+      cancel: { label: 'ยกเลิก', onClick: () => {} },
+    });
+  }
+
   const pet = PET_META[post.petType] ?? PET_META.other;
-  const status = STATUS_META[post.status] ?? STATUS_META.lost;
+  const status = STATUS_META[currentStatus] ?? STATUS_META.lost;
   const sortedImages = [...(post.images ?? [])].sort((a, b) => a.order - b.order);
 
   return (
@@ -142,6 +172,25 @@ export default function PostDetailClient({ post }: { post: Post }) {
                 </div>
               )}
             </div>
+
+            {/* Owner — Found / Adopted action */}
+            {isOwner && (
+              isActionable ? (
+                <button
+                  onClick={handleResolved}
+                  disabled={confirming}
+                  className="w-full py-4 rounded-2xl font-bold text-lg text-white transition-all active:scale-95 disabled:opacity-60 shadow-lg"
+                  style={{ background: 'linear-gradient(135deg, #5fca9f, #4db889)' }}
+                >
+                  {confirming ? '⏳ กำลังอัปเดต...' : actionLabel}
+                </button>
+              ) : (currentStatus === 'found' || currentStatus === 'adopted') ? (
+                <div className="w-full py-3.5 rounded-2xl text-center font-semibold text-white text-base shadow"
+                  style={{ background: 'linear-gradient(135deg, #6bb8e3, #5aa3ce)' }}>
+                  {currentStatus === 'found' ? '✅ ยืนยันแล้ว — เจอน้องแล้ว' : '✅ ยืนยันแล้ว — น้องได้บ้านแล้ว'}
+                </div>
+              ) : null
+            )}
 
             {/* Pet Details */}
             <div className="card">

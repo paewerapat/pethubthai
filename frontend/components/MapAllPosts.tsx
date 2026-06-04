@@ -13,45 +13,33 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// SVG paw print สีขาว (emoji ถูกควบคุมสีโดย OS ไม่ได้ ต้องใช้ SVG)
-const PAW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="15" height="15">
-  <ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/>
-  <ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/>
-  <ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/>
-  <ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/>
-  <ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/>
-</svg>`;
+const PET_EMOJI: Record<string, string> = { dog: '🐶', cat: '🐱', other: '🐾' };
 
 function markerIcon(petType: string, status: string, category: string) {
-  if (petType === 'other') {
-    const color = category === 'adoption' ? '#5fca9f' : status === 'found' ? '#22c55e' : '#ef4444';
-    return L.divIcon({
-      html: `<div style="width:20px;height:20px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.35);"></div>`,
-      className: '',
-      iconSize: [20, 20],
-      iconAnchor: [10, 10],
-      popupAnchor: [0, -14],
-    });
-  }
-
-  const bg = petType === 'dog'
-    ? (category === 'adoption' ? '#5fca9f' : '#f97316')
-    : (category === 'adoption' ? '#5fca9f' : '#e685b3');
+  const emoji = PET_EMOJI[petType] ?? '🐾';
+  const bg = category === 'adoption'
+    ? '#5fca9f'
+    : petType === 'dog'
+      ? '#f97316'
+      : petType === 'cat'
+        ? '#e685b3'
+        : '#ef4444';
 
   return L.divIcon({
     html: `<div style="
-      width:32px;height:32px;
+      width:34px;height:34px;
       background:${bg};
       border:3px solid white;
       border-radius:50%;
       display:flex;align-items:center;justify-content:center;
+      font-size:16px;line-height:1;
       box-shadow:0 2px 8px rgba(0,0,0,0.3);
       cursor:pointer;
-    ">${PAW_SVG}</div>`,
+    ">${emoji}</div>`,
     className: '',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
-    popupAnchor: [0, -20],
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -21],
   });
 }
 
@@ -152,31 +140,25 @@ export default function MapAllPosts({ posts }: { posts: Post[] }) {
         <div className="flex flex-wrap gap-3 text-sm text-gray-500">
           {valid.some((p) => p.petType === 'dog' && p.category !== 'adoption') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-5 h-5 rounded-full bg-orange-400 border-2 border-white shadow items-center justify-center shrink-0"
-                dangerouslySetInnerHTML={{ __html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="10" height="10"><ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/><ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/><ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/></svg>' }}
-              />
-              สุนัข (หาย)
+              <span className="inline-flex w-6 h-6 rounded-full bg-orange-400 border-2 border-white shadow items-center justify-center text-sm shrink-0">🐶</span>
+              สุนัข
             </span>
           )}
           {valid.some((p) => p.petType === 'cat' && p.category !== 'adoption') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-5 h-5 rounded-full bg-[#e685b3] border-2 border-white shadow items-center justify-center shrink-0"
-                dangerouslySetInnerHTML={{ __html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="10" height="10"><ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/><ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/><ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/></svg>' }}
-              />
-              แมว (หาย)
+              <span className="inline-flex w-6 h-6 rounded-full bg-[#e685b3] border-2 border-white shadow items-center justify-center text-sm shrink-0">🐱</span>
+              แมว
             </span>
           )}
           {valid.some((p) => p.category === 'adoption') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-5 h-5 rounded-full border-2 border-white shadow items-center justify-center shrink-0" style={{ background: '#5fca9f' }}
-                dangerouslySetInnerHTML={{ __html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="10" height="10"><ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/><ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/><ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/></svg>' }}
-              />
+              <span className="inline-flex w-6 h-6 rounded-full border-2 border-white shadow items-center justify-center text-sm shrink-0" style={{ background: '#5fca9f' }}>🐶</span>
               รอบ้านใหม่
             </span>
           )}
           {valid.some((p) => p.petType === 'other') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded-full bg-red-400 shrink-0" />
+              <span className="inline-flex w-6 h-6 rounded-full bg-red-400 border-2 border-white shadow items-center justify-center text-sm shrink-0">🐾</span>
               อื่นๆ
             </span>
           )}

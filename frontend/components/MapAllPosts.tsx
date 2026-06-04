@@ -28,8 +28,8 @@ function markerIcon(petType: string, status: string, category: string) {
   return L.divIcon({
     html: `<div style="
       width:34px;height:34px;
-      background:${bg};
-      border:3px solid white;
+      background:white;
+      border:3px solid ${bg};
       border-radius:50%;
       display:flex;align-items:center;justify-content:center;
       font-size:16px;line-height:1;
@@ -140,25 +140,25 @@ export default function MapAllPosts({ posts }: { posts: Post[] }) {
         <div className="flex flex-wrap gap-3 text-sm text-gray-500">
           {valid.some((p) => p.petType === 'dog' && p.category !== 'adoption') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-6 h-6 rounded-full bg-orange-400 border-2 border-white shadow items-center justify-center text-sm shrink-0">🐶</span>
+              <span className="inline-flex w-6 h-6 rounded-full bg-white border-2 border-orange-400 shadow items-center justify-center text-sm shrink-0">🐶</span>
               สุนัข
             </span>
           )}
           {valid.some((p) => p.petType === 'cat' && p.category !== 'adoption') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-6 h-6 rounded-full bg-[#e685b3] border-2 border-white shadow items-center justify-center text-sm shrink-0">🐱</span>
+              <span className="inline-flex w-6 h-6 rounded-full bg-white border-2 border-[#e685b3] shadow items-center justify-center text-sm shrink-0">🐱</span>
               แมว
             </span>
           )}
           {valid.some((p) => p.category === 'adoption') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-6 h-6 rounded-full border-2 border-white shadow items-center justify-center text-sm shrink-0" style={{ background: '#5fca9f' }}>🐶</span>
+              <span className="inline-flex w-6 h-6 rounded-full bg-white border-2 shadow items-center justify-center text-sm shrink-0" style={{ borderColor: '#5fca9f' }}>🐾</span>
               รอบ้านใหม่
             </span>
           )}
           {valid.some((p) => p.petType === 'other') && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-flex w-6 h-6 rounded-full bg-red-400 border-2 border-white shadow items-center justify-center text-sm shrink-0">🐾</span>
+              <span className="inline-flex w-6 h-6 rounded-full bg-white border-2 border-red-400 shadow items-center justify-center text-sm shrink-0">🐾</span>
               อื่นๆ
             </span>
           )}

@@ -13,28 +13,45 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-function markerIcon(status: string, category: string) {
-  const color =
-    category === 'adoption'
-      ? '#5fca9f'
-      : status === 'lost'
-      ? '#ef4444'
-      : status === 'found'
-      ? '#22c55e'
-      : '#94a3b8';
+// SVG paw print สีขาว (emoji ถูกควบคุมสีโดย OS ไม่ได้ ต้องใช้ SVG)
+const PAW_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="15" height="15">
+  <ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/>
+  <ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/>
+  <ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/>
+  <ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/>
+  <ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/>
+</svg>`;
+
+function markerIcon(petType: string, status: string, category: string) {
+  if (petType === 'other') {
+    const color = category === 'adoption' ? '#5fca9f' : status === 'found' ? '#22c55e' : '#ef4444';
+    return L.divIcon({
+      html: `<div style="width:20px;height:20px;background:${color};border:3px solid white;border-radius:50%;box-shadow:0 2px 6px rgba(0,0,0,0.35);"></div>`,
+      className: '',
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+      popupAnchor: [0, -14],
+    });
+  }
+
+  const bg = petType === 'dog'
+    ? (category === 'adoption' ? '#5fca9f' : '#f97316')
+    : (category === 'adoption' ? '#5fca9f' : '#e685b3');
 
   return L.divIcon({
     html: `<div style="
-      width:22px;height:22px;
-      background:${color};
+      width:32px;height:32px;
+      background:${bg};
       border:3px solid white;
       border-radius:50%;
-      box-shadow:0 2px 6px rgba(0,0,0,0.35);
-    "></div>`,
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 2px 8px rgba(0,0,0,0.3);
+      cursor:pointer;
+    ">${PAW_SVG}</div>`,
     className: '',
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
-    popupAnchor: [0, -16],
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -20],
   });
 }
 
@@ -85,7 +102,7 @@ export default function MapAllPosts({ posts }: { posts: Post[] }) {
           <Marker
             key={post.id}
             position={[Number(post.latitude), Number(post.longitude)]}
-            icon={markerIcon(post.status, post.category)}
+            icon={markerIcon(post.petType, post.status, post.category)}
           >
             <Popup>
               <div style={{ minWidth: '160px', maxWidth: '200px', fontFamily: 'inherit' }}>
@@ -133,28 +150,34 @@ export default function MapAllPosts({ posts }: { posts: Post[] }) {
       {/* Legend + count */}
       <div className="flex flex-wrap items-center justify-between gap-3 mt-3 px-1">
         <div className="flex flex-wrap gap-3 text-sm text-gray-500">
-          {hasLost && (
+          {valid.some((p) => p.petType === 'dog' && p.category !== 'adoption') && (
+            <span className="flex items-center gap-1.5">
+              <span className="inline-flex w-5 h-5 rounded-full bg-orange-400 border-2 border-white shadow items-center justify-center shrink-0"
+                dangerouslySetInnerHTML={{ __html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="10" height="10"><ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/><ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/><ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/></svg>' }}
+              />
+              สุนัข (หาย)
+            </span>
+          )}
+          {valid.some((p) => p.petType === 'cat' && p.category !== 'adoption') && (
+            <span className="flex items-center gap-1.5">
+              <span className="inline-flex w-5 h-5 rounded-full bg-[#e685b3] border-2 border-white shadow items-center justify-center shrink-0"
+                dangerouslySetInnerHTML={{ __html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="10" height="10"><ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/><ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/><ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/></svg>' }}
+              />
+              แมว (หาย)
+            </span>
+          )}
+          {valid.some((p) => p.category === 'adoption') && (
+            <span className="flex items-center gap-1.5">
+              <span className="inline-flex w-5 h-5 rounded-full border-2 border-white shadow items-center justify-center shrink-0" style={{ background: '#5fca9f' }}
+                dangerouslySetInnerHTML={{ __html: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="10" height="10"><ellipse cx="50" cy="66" rx="23" ry="21" fill="white"/><ellipse cx="24" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="50" cy="30" rx="11" ry="10" fill="white"/><ellipse cx="76" cy="38" rx="11" ry="10" fill="white"/><ellipse cx="14" cy="56" rx="8" ry="7" fill="white"/></svg>' }}
+              />
+              รอบ้านใหม่
+            </span>
+          )}
+          {valid.some((p) => p.petType === 'other') && (
             <span className="flex items-center gap-1.5">
               <span className="inline-block w-3 h-3 rounded-full bg-red-400 shrink-0" />
-              หาย
-            </span>
-          )}
-          {hasFound && (
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded-full bg-green-400 shrink-0" />
-              พบแล้ว
-            </span>
-          )}
-          {hasAdopted && (
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded-full bg-gray-400 shrink-0" />
-              รับเลี้ยงแล้ว
-            </span>
-          )}
-          {hasAdoption && (
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded-full shrink-0" style={{ background: '#5fca9f' }} />
-              รอบ้านใหม่
+              อื่นๆ
             </span>
           )}
         </div>

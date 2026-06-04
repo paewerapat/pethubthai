@@ -131,24 +131,25 @@ export default function AdoptPage() {
               {loading ? 'กำลังโหลด...' : `น้องที่รอบ้านใหม่ ${total.toLocaleString()} ตัว`}
             </p>
           </div>
-          <div className="flex items-center bg-gray-100 rounded-xl p-1 shrink-0">
+          <div className="flex items-center rounded-xl border border-gray-200 overflow-hidden shrink-0">
             <button
               onClick={() => setViewMode('grid')}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-all ${
                 viewMode === 'grid'
-                  ? 'bg-white text-gray-800 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#5fca9f] text-white'
+                  : 'bg-white text-gray-500 hover:bg-gray-50'
               }`}
             >
               <FiGrid className="w-4 h-4" />
               รายการ
             </button>
+            <div className="w-px h-8 bg-gray-200" />
             <button
               onClick={() => setViewMode('map')}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-all ${
                 viewMode === 'map'
-                  ? 'bg-white text-gray-800 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-[#6bb8e3] text-white'
+                  : 'bg-white text-gray-500 hover:bg-gray-50'
               }`}
             >
               <FiMap className="w-4 h-4" />

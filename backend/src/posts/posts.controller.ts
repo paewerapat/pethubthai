@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
   Request,
   Query,
 } from '@nestjs/common';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { SkipThrottle } from '@nestjs/throttler';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PostRateLimitGuard } from './guards/post-rate-limit.guard';
 
@@ -26,6 +29,8 @@ export class PostsController {
     return this.postsService.create(createPostDto, req.user);
   }
 
+  @SkipThrottle()
+  @UseInterceptors(CacheInterceptor)
   @Get()
   findAll(
     @Query('page') page?: string,
@@ -55,11 +60,14 @@ export class PostsController {
     return this.postsService.findByUser(req.user.id);
   }
 
+  @SkipThrottle()
+  @UseInterceptors(CacheInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.postsService.findOne(id);
   }
 
+  @SkipThrottle()
   @Post(':id/view')
   incrementView(@Param('id') id: string) {
     return this.postsService.incrementView(id);

@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { getDatabaseConfig } from './config/database.config';
@@ -24,9 +25,10 @@ import { UploadModule } from './upload/upload.module';
     ThrottlerModule.forRoot([
       {
         ttl: 60000,
-        limit: 10,
+        limit: 100,  // general browsing — auth endpoints override to 5/min
       },
     ]),
+    CacheModule.register({ isGlobal: true, ttl: 30000 }), // 30s in-memory cache
     AuthModule,
     PostsModule,
     UploadModule,

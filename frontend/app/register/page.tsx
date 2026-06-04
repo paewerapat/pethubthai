@@ -42,6 +42,8 @@ function RegisterForm() {
 
   async function onSubmit(data: FormData) {
     setError(null);
+    const hp = (document.getElementById('_hp_website') as HTMLInputElement)?.value;
+    if (hp) return;
     try {
       const res = await registerApi(data.name, data.email, data.password);
       setToken(res.access_token);
@@ -73,6 +75,8 @@ function RegisterForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        {/* honeypot — hidden from real users, bots fill this */}
+        <input id="_hp_website" name="website" type="text" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', opacity: 0 }} autoComplete="off" />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">ชื่อ-นามสกุล</label>
           <div className={fieldClass(!!errors.name)}>

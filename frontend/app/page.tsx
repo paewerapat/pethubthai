@@ -53,7 +53,10 @@ export default async function Home() {
             {/* Left Content */}
             <div className="flex-1 space-y-8 text-center lg:text-left">
               <div className="space-y-4">
-                <LottieCat className="mx-auto lg:mx-0 pointer-events-none" width={650} cropTop={134} cropBottom={194} />
+                {/* Mobile */}
+                <LottieCat className="block lg:hidden mx-auto pointer-events-none" width={300} cropTop={62} cropBottom={90} />
+                {/* Desktop */}
+                <LottieCat className="hidden lg:block lg:mx-0 pointer-events-none" width={650} cropTop={134} cropBottom={194} />
                 <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight">
                   ช่วยกันตามหา
                   <br />

@@ -40,9 +40,12 @@ export default function PostDetailClient({ post }: { post: Post }) {
   }, [post.id]);
 
   const isOwner = !!user && user.id === post.userId;
+  const isAdoption = post.category === 'adoption';
   const postUrl = `${BASE_URL}/post/${post.id}`;
   const petLabel = post.petType === 'dog' ? 'สุนัข' : post.petType === 'cat' ? 'แมว' : 'สัตว์เลี้ยง';
-  const shareText = `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation} ช่วยแชร์ด้วยนะครับ`;
+  const shareText = isAdoption
+    ? `หาบ้านให้${petLabel} "${post.petName}" บริเวณ ${post.lostLocation} ช่วยแชร์หาบ้านให้น้องด้วยนะครับ`
+    : `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation} ช่วยแชร์ด้วยนะครับ`;
 
   async function handleDelete() {
     if (!confirm('ต้องการลบประกาศนี้ใช่ไหม?')) return;
@@ -90,7 +93,9 @@ export default function PostDetailClient({ post }: { post: Post }) {
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Link href="/" className="hover:text-[#5fca9f] transition-colors">หน้าแรก</Link>
             <span>/</span>
-            <Link href="/posts" className="hover:text-[#5fca9f] transition-colors">ตามหาน้อง</Link>
+            <Link href={isAdoption ? '/adopt' : '/posts'} className="hover:text-[#5fca9f] transition-colors">
+              {isAdoption ? 'หาบ้านให้น้อง' : 'ตามหาน้อง'}
+            </Link>
             <span>/</span>
             <span className="text-gray-800 truncate max-w-[160px]">{post.petName}</span>
           </div>
@@ -204,12 +209,13 @@ export default function PostDetailClient({ post }: { post: Post }) {
             <div className="card">
               <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
                 <FiMapPin className="text-[#5fca9f]" />
-                สถานที่หาย
+                {isAdoption ? 'สถานที่รับเลี้ยง' : 'สถานที่หาย'}
               </h3>
               <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
                 <FiCalendar className="text-[#6bb8e3] shrink-0" />
                 <span>
-                  {new Date(post.lostDate).toLocaleString('th-TH', {
+                  {isAdoption ? 'ลงประกาศเมื่อ ' : ''}
+                  {new Date(isAdoption ? post.createdAt : post.lostDate).toLocaleString('th-TH', {
                     day: 'numeric', month: 'long', year: 'numeric',
                     hour: '2-digit', minute: '2-digit',
                   })}

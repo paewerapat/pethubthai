@@ -37,6 +37,8 @@ function LoginForm() {
 
   async function onSubmit(data: FormData) {
     setError(null);
+    const hp = (document.getElementById('_hp_website') as HTMLInputElement)?.value;
+    if (hp) return;
     try {
       const res = await login(data.email, data.password);
       setToken(res.access_token);
@@ -61,6 +63,7 @@ function LoginForm() {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <input id="_hp_website" name="website" type="text" tabIndex={-1} aria-hidden="true" style={{ position: 'absolute', left: '-9999px', opacity: 0 }} autoComplete="off" />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">อีเมล</label>
           <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border bg-white transition-all focus-within:ring-2 ${
@@ -126,10 +129,7 @@ function LoginForm() {
               กำลังเข้าสู่ระบบ...
             </>
           ) : (
-            <>
-              <LottieCat width={48} cropBottom={20} />
-              เข้าสู่ระบบ
-            </>
+            'เข้าสู่ระบบ'
           )}
         </button>
       </form>
@@ -159,14 +159,7 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
           >
-            <motion.img
-              src="/images/logo-width-transparent.png"
-              alt="PetHub Thai"
-              className="h-16 w-auto mx-auto mb-4"
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: 'spring', stiffness: 280, damping: 18, delay: 0.1 }}
-            />
+            <LottieCat className="mx-auto" width={160} cropTop={33} cropBottom={48} />
             <h1 className="text-3xl font-bold text-gray-800">เข้าสู่ระบบ</h1>
             <p className="text-gray-500 mt-2">ยินดีต้อนรับกลับมา PetHub Thai</p>
           </motion.div>

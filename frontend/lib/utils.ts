@@ -17,9 +17,10 @@ export const PET_META = {
 } as const;
 
 export const STATUS_META = {
-  lost:    { label: 'หาย',     color: 'bg-[#ff9ec7]/20 text-[#e685b3] border border-[#ff9ec7]/40' },
-  found:   { label: 'พบแล้ว', color: 'bg-[#6bb8e3]/20 text-[#5aa3ce] border border-[#6bb8e3]/40' },
-  adopted: { label: 'รับเลี้ยง', color: 'bg-[#5fca9f]/20 text-[#4db889] border border-[#5fca9f]/40' },
+  lost:      { label: 'หาย',      color: 'bg-[#e685b3]/85 backdrop-blur-sm text-white' },
+  found:     { label: 'พบแล้ว',  color: 'bg-[#5aa3ce]/85 backdrop-blur-sm text-white' },
+  adopted:   { label: 'รับเลี้ยง', color: 'bg-[#4db889]/85 backdrop-blur-sm text-white' },
+  available: { label: 'หาบ้าน',  color: 'bg-[#f59e0b]/85 backdrop-blur-sm text-white' },
 } as const;
 
 export const GENDER_LABEL: Record<string, string> = {

@@ -20,13 +20,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const post = await getPost(id);
   if (!post) return { title: 'ไม่พบประกาศ' };
 
+  const isAdoption = post.category === 'adoption';
   const petLabel = post.petType === 'dog' ? 'สุนัข' : post.petType === 'cat' ? 'แมว' : 'สัตว์เลี้ยง';
-  const title = post.lostLocation
-    ? `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation}`
-    : `ตามหา${petLabel} "${post.petName}"`;
+  const title = isAdoption
+    ? `หาบ้านให้${petLabel} "${post.petName}" บริเวณ ${post.lostLocation}`
+    : post.lostLocation
+      ? `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation}`
+      : `ตามหา${petLabel} "${post.petName}"`;
   const description = post.description
     ? post.description.slice(0, 120)
-    : `ตามหา${petLabel}ชื่อ ${post.petName} หายบริเวณ ${post.lostLocation}`;
+    : isAdoption
+      ? `หาบ้านให้${petLabel}ชื่อ ${post.petName} บริเวณ ${post.lostLocation}`
+      : `ตามหา${petLabel}ชื่อ ${post.petName} หายบริเวณ ${post.lostLocation}`;
   const sorted = [...(post.images ?? [])].sort((a, b) => a.order - b.order);
   const coverImage = sorted[0]?.imageUrl ?? '/images/logo-banner.png';
 

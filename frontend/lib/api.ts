@@ -27,7 +27,7 @@ export interface Post {
   breed?: string;
   gender: 'male' | 'female' | 'unknown';
   ageEstimate?: string;
-  status: 'lost' | 'found' | 'adopted';
+  status: 'lost' | 'found' | 'adopted' | 'available';
   lostDate: string;
   lostLocation: string;
   latitude: number;
@@ -110,7 +110,7 @@ export interface CreatePostPayload {
   breed?: string;
   gender: 'male' | 'female' | 'unknown';
   ageEstimate?: string;
-  status: 'lost' | 'found' | 'adopted';
+  status: 'lost' | 'found' | 'adopted' | 'available';
   lostDate: string;
   lostLocation: string;
   latitude: number;

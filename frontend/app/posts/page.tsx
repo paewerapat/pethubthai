@@ -27,9 +27,9 @@ const PET_FILTERS = [
 ];
 
 const STATUS_FILTERS = [
+  { value: '',      label: 'ทั้งหมด' },
   { value: 'lost',  label: '🔍 หาย' },
   { value: 'found', label: '✅ เจอน้องแล้ว' },
-  { value: '',      label: 'ทั้งหมด' },
 ];
 
 const LIMIT = 12;

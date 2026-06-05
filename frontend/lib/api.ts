@@ -93,6 +93,13 @@ export async function trackPostView(id: string) {
   await api.post(`/posts/${id}/view`).catch(() => {});
 }
 
+export async function logEvent(
+  event: string,
+  data?: { userId?: string; postId?: string; metadata?: Record<string, any> },
+): Promise<void> {
+  await api.post('/analytics/log', { event, ...data }).catch(() => {});
+}
+
 export async function deletePost(id: string) {
   await api.delete(`/posts/${id}`);
 }
@@ -137,6 +144,27 @@ export interface AuthUser {
   name: string;
   email: string;
   avatar?: string;
+  role?: 'user' | 'admin';
+}
+
+// ── Admin API ──────────────────────────────────────────────────────────────────
+export async function adminGetDashboard() {
+  const { data } = await api.get('/admin/dashboard');
+  return data;
+}
+export async function adminGetUsers(page = 1, search = '') {
+  const { data } = await api.get('/admin/users', { params: { page, limit: 20, search } });
+  return data;
+}
+export async function adminDeleteUser(id: string) {
+  await api.delete(`/admin/users/${id}`);
+}
+export async function adminGetPosts(page = 1, category = '', status = '') {
+  const { data } = await api.get('/admin/posts', { params: { page, limit: 20, category, status } });
+  return data;
+}
+export async function adminDeletePost(id: string) {
+  await api.delete(`/admin/posts/${id}`);
 }
 
 export async function login(email: string, password: string): Promise<{ user: AuthUser; access_token: string }> {

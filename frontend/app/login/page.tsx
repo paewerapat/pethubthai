@@ -12,7 +12,7 @@ import Layout from '@/components/Layout';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
 import FloatingPets from '@/components/FloatingPets';
 import LottieCat from '@/components/LottieCat';
-import { login, setToken } from '@/lib/api';
+import { login, setToken, logEvent } from '@/lib/api';
 import { toast } from 'sonner';
 
 const schema = z.object({
@@ -42,6 +42,7 @@ function LoginForm() {
     try {
       const res = await login(data.email, data.password);
       setToken(res.access_token);
+      logEvent('user_login', { metadata: { method: 'email' } });
       toast.success('เข้าสู่ระบบสำเร็จ ยินดีต้อนรับ!');
       router.push(redirect);
     } catch (err: any) {

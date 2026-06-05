@@ -10,6 +10,8 @@ import { getDatabaseConfig } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { PostsModule } from './posts/posts.module';
 import { UploadModule } from './upload/upload.module';
+import { AnalyticsModule } from './analytics/analytics.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { UploadModule } from './upload/upload.module';
     AuthModule,
     PostsModule,
     UploadModule,
+    AnalyticsModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

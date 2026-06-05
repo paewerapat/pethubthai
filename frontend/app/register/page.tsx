@@ -9,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { FiMail, FiLock, FiUser, FiEye, FiEyeOff } from 'react-icons/fi';
 import Layout from '@/components/Layout';
 import SocialLoginButtons from '@/components/SocialLoginButtons';
-import { register as registerApi, setToken } from '@/lib/api';
+import { register as registerApi, setToken, logEvent } from '@/lib/api';
 import { toast } from 'sonner';
 
 const schema = z
@@ -47,6 +47,7 @@ function RegisterForm() {
     try {
       const res = await registerApi(data.name, data.email, data.password);
       setToken(res.access_token);
+      logEvent('user_register', { metadata: { method: 'email' } });
       toast.success('สมัครสมาชิกสำเร็จ ยินดีต้อนรับสู่ PetHub Thai!');
       router.push(redirect);
     } catch (err: any) {

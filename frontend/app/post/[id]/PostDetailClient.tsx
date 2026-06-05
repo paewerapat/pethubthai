@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import Layout from '@/components/Layout';
-import { getToken, getMe, deletePost, updatePostStatus, trackPostView, type Post, type AuthUser } from '@/lib/api';
+import { getToken, getMe, deletePost, updatePostStatus, trackPostView, logEvent, type Post, type AuthUser } from '@/lib/api';
 import { toast } from 'sonner';
 import { PET_META, STATUS_META, GENDER_LABEL, relativeTime } from '@/lib/utils';
 import {
@@ -46,9 +46,13 @@ export default function PostDetailClient({ post }: { post: Post }) {
   const isAdoption = post.category === 'adoption';
   const postUrl = `${BASE_URL}/post/${post.id}`;
   const petLabel = post.petType === 'dog' ? 'สุนัข' : post.petType === 'cat' ? 'แมว' : 'สัตว์เลี้ยง';
-  const shareText = isAdoption
-    ? `หาบ้านให้${petLabel} "${post.petName}" บริเวณ ${post.lostLocation} ช่วยแชร์หาบ้านให้น้องด้วยนะครับ`
-    : `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation} ช่วยแชร์ด้วยนะครับ`;
+  const shareText = currentStatus === 'found'
+    ? `✅ เจอน้องแล้ว! ${petLabel} "${post.petName}" กลับบ้านได้แล้ว ขอบคุณทุกคนที่ช่วยแชร์ 🎉`
+    : currentStatus === 'adopted'
+      ? `🏡 น้องได้บ้านแล้ว! ${petLabel} "${post.petName}" มีบ้านใหม่แล้ว ขอบคุณทุกคนที่ช่วยแชร์ 💚`
+      : isAdoption
+        ? `หาบ้านให้${petLabel} "${post.petName}" บริเวณ ${post.lostLocation} ช่วยแชร์หาบ้านให้น้องด้วยนะครับ`
+        : `ตามหา${petLabel} "${post.petName}" หายบริเวณ ${post.lostLocation} ช่วยแชร์ด้วยนะครับ`;
 
   async function handleDelete() {
     if (!confirm('ต้องการลบประกาศนี้ใช่ไหม?')) return;
@@ -63,18 +67,22 @@ export default function PostDetailClient({ post }: { post: Post }) {
   }
 
   function shareToFacebook() {
+    logEvent('share_click', { postId: post.id, metadata: { platform: 'facebook', status: currentStatus } });
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}&quote=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
   }
 
   function shareToTwitter() {
+    logEvent('share_click', { postId: post.id, metadata: { platform: 'twitter', status: currentStatus } });
     window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
   }
 
   function shareToLine() {
+    logEvent('share_click', { postId: post.id, metadata: { platform: 'line', status: currentStatus } });
     window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(shareText)}`, '_blank', 'width=600,height=400');
   }
 
   async function copyLink() {
+    logEvent('share_click', { postId: post.id, metadata: { platform: 'copy_link', status: currentStatus } });
     try {
       await navigator.clipboard.writeText(postUrl);
       setCopied(true);
@@ -99,6 +107,7 @@ export default function PostDetailClient({ post }: { post: Post }) {
           try {
             await updatePostStatus(post.id, resolvedStatus as 'found' | 'adopted');
             setCurrentStatus(resolvedStatus);
+            logEvent('post_resolved', { postId: post.id, userId: user?.id, metadata: { resolvedStatus, category: post.category } });
             toast.success(currentStatus === 'lost' ? 'ยินดีด้วย! น้องกลับบ้านแล้ว 🎉' : 'น้องได้บ้านใหม่แล้ว 🏡');
           } catch {
             toast.error('เกิดข้อผิดพลาด กรุณาลองใหม่');
@@ -337,51 +346,61 @@ export default function PostDetailClient({ post }: { post: Post }) {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <a
-                  href={`tel:${post.phoneNumber}`}
-                  className="flex items-center gap-3 w-full bg-gradient-to-r from-[#5fca9f] to-[#4db889] text-white font-semibold py-3.5 px-5 rounded-2xl hover:from-[#4db889] hover:to-[#3da87a] active:scale-95 transition-all shadow-md"
-                >
-                  <FiPhone className="w-5 h-5 shrink-0" />
-                  <span>{post.phoneNumber}</span>
-                </a>
-
-                {post.lineId && (
+              {currentStatus === 'lost' || currentStatus === 'available' ? (
+                <div className="space-y-3">
                   <a
-                    href={`https://line.me/R/ti/p/~${post.lineId}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-3 w-full border-2 border-[#06C755]/30 bg-[#06C755]/5 text-[#06C755] font-medium py-3 px-5 rounded-2xl hover:bg-[#06C755]/10 active:scale-95 transition-all"
+                    href={`tel:${post.phoneNumber}`}
+                    className="flex items-center gap-3 w-full bg-gradient-to-r from-[#5fca9f] to-[#4db889] text-white font-semibold py-3.5 px-5 rounded-2xl hover:from-[#4db889] hover:to-[#3da87a] active:scale-95 transition-all shadow-md"
                   >
-                    <FaLine className="w-5 h-5 shrink-0" />
-                    <span>{post.lineId}</span>
+                    <FiPhone className="w-5 h-5 shrink-0" />
+                    <span>{post.phoneNumber}</span>
                   </a>
-                )}
 
-                {post.facebook && (
-                  <a
-                    href={`https://facebook.com/${post.facebook}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-3 w-full border-2 border-[#1877F2]/30 bg-[#1877F2]/5 text-[#1877F2] font-medium py-3 px-5 rounded-2xl hover:bg-[#1877F2]/10 active:scale-95 transition-all"
-                  >
-                    <FaFacebook className="w-5 h-5 shrink-0" />
-                    <span>{post.facebook}</span>
-                  </a>
-                )}
+                  {post.lineId && (
+                    <a
+                      href={`https://line.me/R/ti/p/~${post.lineId}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-3 w-full border-2 border-[#06C755]/30 bg-[#06C755]/5 text-[#06C755] font-medium py-3 px-5 rounded-2xl hover:bg-[#06C755]/10 active:scale-95 transition-all"
+                    >
+                      <FaLine className="w-5 h-5 shrink-0" />
+                      <span>{post.lineId}</span>
+                    </a>
+                  )}
 
-                {post.instagram && (
-                  <a
-                    href={`https://instagram.com/${post.instagram}`}
-                    target="_blank" rel="noopener noreferrer"
-                    className="flex items-center gap-3 w-full border-2 border-[#E1306C]/30 bg-[#E1306C]/5 text-[#E1306C] font-medium py-3 px-5 rounded-2xl hover:bg-[#E1306C]/10 active:scale-95 transition-all"
-                  >
-                    <FaInstagram className="w-5 h-5 shrink-0" />
-                    <span>{post.instagram}</span>
-                  </a>
-                )}
-              </div>
+                  {post.facebook && (
+                    <a
+                      href={`https://facebook.com/${post.facebook}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-3 w-full border-2 border-[#1877F2]/30 bg-[#1877F2]/5 text-[#1877F2] font-medium py-3 px-5 rounded-2xl hover:bg-[#1877F2]/10 active:scale-95 transition-all"
+                    >
+                      <FaFacebook className="w-5 h-5 shrink-0" />
+                      <span>{post.facebook}</span>
+                    </a>
+                  )}
+
+                  {post.instagram && (
+                    <a
+                      href={`https://instagram.com/${post.instagram}`}
+                      target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-3 w-full border-2 border-[#E1306C]/30 bg-[#E1306C]/5 text-[#E1306C] font-medium py-3 px-5 rounded-2xl hover:bg-[#E1306C]/10 active:scale-95 transition-all"
+                    >
+                      <FaInstagram className="w-5 h-5 shrink-0" />
+                      <span>{post.instagram}</span>
+                    </a>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-gradient-to-br from-[#e8f8f0] to-[#e8f4f8] rounded-2xl px-5 py-4 text-center">
+                  <p className="text-2xl mb-1">{currentStatus === 'found' ? '🎉' : '🏡'}</p>
+                  <p className="font-semibold text-gray-700 text-sm">
+                    {currentStatus === 'found' ? 'น้องกลับบ้านแล้ว!' : 'น้องได้บ้านใหม่แล้ว!'}
+                  </p>
+                  <p className="text-gray-400 text-xs mt-1">ขอบคุณทุกคนที่ช่วยแชร์ 💚</p>
+                </div>
+              )}
             </div>
 
-            {post.hasReward && (
+            {post.hasReward && (currentStatus === 'lost' || currentStatus === 'available') && (
               <div className="card bg-gradient-to-br from-yellow-50 to-amber-50 border border-yellow-200 !shadow-none">
                 <div className="flex items-start gap-3">
                   <span className="text-2xl shrink-0">💰</span>

@@ -8,6 +8,11 @@ import {
 } from 'typeorm';
 import { Post } from './post.entity';
 
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
 export enum AuthProvider {
   LOCAL = 'local',
   GOOGLE = 'google',
@@ -41,6 +46,9 @@ export class User {
 
   @Column({ nullable: true, name: 'provider_id' })
   providerId: string;
+
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
+  role: UserRole;
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];

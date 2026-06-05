@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from '../entities/user.entity';
 import { Post } from '../entities/post.entity';
 import { PostImage } from '../entities/post-image.entity';
+import { EventLog } from '../entities/event-log.entity';
 
 export const getDatabaseConfig = (
   configService: ConfigService,
@@ -13,7 +14,7 @@ export const getDatabaseConfig = (
   username: configService.get<string>('DB_USERNAME'),
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_NAME'),
-  entities: [User, Post, PostImage],
+  entities: [User, Post, PostImage, EventLog],
   synchronize: true,
   logging: false,
   charset: 'utf8mb4',

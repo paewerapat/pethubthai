@@ -61,7 +61,7 @@ export default async function Home() {
                   ช่วยกันตามหา
                   <br />
                   <span className="bg-gradient-to-r from-[#5fca9f] via-[#6bb8e3] to-[#ff9ec7] bg-clip-text text-transparent">
-                    น้องหมาน้องแมว
+                    สัตว์เลี้ยงของคุณ
                   </span>
                   <br />
                   <span className="text-gray-800">ที่หายไป</span>

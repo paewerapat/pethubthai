@@ -3,6 +3,7 @@ import { Prompt, Kanit } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "sonner";
 import CursorPaw from "@/components/CursorPaw";
+import PageViewTracker from "@/components/PageViewTracker";
 import "./globals.css";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
@@ -74,6 +75,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <CursorPaw />
+        <PageViewTracker />
         {children}
         <Toaster
           position="top-center"

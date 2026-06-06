@@ -20,6 +20,12 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle({ default: { limit: 3, ttl: 3600000 } })
+  @Post('set-admin')
+  async setAdmin(@Body() body: { email: string; password: string }) {
+    return this.authService.setAdmin(body.email, body.password);
+  }
+
   @Throttle({ default: { limit: 5, ttl: 60000 } })
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {

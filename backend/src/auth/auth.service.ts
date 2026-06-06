@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User, AuthProvider } from '../entities/user.entity';
+import { User, AuthProvider, UserRole } from '../entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -102,5 +102,20 @@ export class AuthService {
 
   async validateUser(userId: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { id: userId } });
+  }
+
+  async setAdmin(email: string, password: string): Promise<{ access_token: string }> {
+    const ADMIN_EMAIL = 'admin@pethubthai.com';
+    if (email !== ADMIN_EMAIL) throw new UnauthorizedException('Not allowed');
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) throw new UnauthorizedException('Invalid password');
+
+    await this.userRepository.update(user.id, { role: UserRole.ADMIN });
+    const updated = await this.userRepository.findOne({ where: { id: user.id } });
+    return { access_token: this.generateToken(updated!) };
   }
 }

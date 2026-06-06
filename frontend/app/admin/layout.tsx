@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getToken, getMe, type AuthUser } from '@/lib/api';
-import { FiGrid, FiUsers, FiFileText, FiLogOut, FiMenu, FiX } from 'react-icons/fi';
+import { FiGrid, FiUsers, FiFileText, FiLogOut, FiMenu } from 'react-icons/fi';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: FiGrid, exact: true },
@@ -20,13 +21,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (!getToken()) { router.replace('/login?redirect=/admin'); return; }
+    if (!getToken()) { notFound(); return; }
     getMe().then((u) => {
-      if (u.role !== 'admin') { router.replace('/'); return; }
+      if (u.role !== 'admin') { notFound(); return; }
       setUser(u);
       setChecking(false);
-    }).catch(() => router.replace('/login?redirect=/admin'));
-  }, [router]);
+    }).catch(() => notFound());
+  }, []);
 
   if (checking) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-950">

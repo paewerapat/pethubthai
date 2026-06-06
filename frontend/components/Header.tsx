@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { FiUser, FiLogOut, FiChevronDown, FiSearch, FiHome } from 'react-icons/fi';
+import { FiUser, FiLogOut, FiChevronDown, FiSearch, FiHome, FiShield } from 'react-icons/fi';
 import { getToken, clearToken, getMe, type AuthUser } from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -98,6 +98,16 @@ export default function Header() {
                   <>
                     <div className="fixed inset-0 z-10" onClick={() => setDropdownOpen(false)} />
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-20">
+                      {user.role === 'admin' && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#5fca9f] hover:bg-[#5fca9f]/5 transition-colors font-medium"
+                        >
+                          <FiShield className="w-4 h-4" />
+                          Admin Panel
+                        </Link>
+                      )}
                       <Link
                         href="/my-posts"
                         onClick={() => setDropdownOpen(false)}
@@ -199,6 +209,15 @@ export default function Header() {
             <div className="pt-3 border-t border-gray-100 space-y-2">
               {user ? (
                 <>
+                  {user.role === 'admin' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#5fca9f] font-medium hover:bg-[#5fca9f]/5 rounded-xl"
+                    >
+                      <FiShield className="w-4 h-4" /> Admin Panel
+                    </Link>
+                  )}
                   <Link
                     href="/my-posts"
                     onClick={() => setMobileOpen(false)}

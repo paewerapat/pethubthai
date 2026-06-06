@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import PostCard from '@/components/PostCard';
 import FloatingPets from '@/components/FloatingPets';
 import LottieCat from '@/components/LottieCat';
+import MapHomepageSection from '@/components/MapHomepageSection';
 import type { Post, PostsResponse } from '@/lib/api';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api';
@@ -131,6 +132,9 @@ export default async function Home() {
         </div>
 
       </section>
+
+      {/* Map Section */}
+      <MapHomepageSection />
 
       {/* Features Section */}
       <section className="py-20 bg-white/40 backdrop-blur-sm">

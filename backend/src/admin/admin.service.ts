@@ -83,7 +83,7 @@ export class AdminService {
 
   async getUsers(page = 1, limit = 20, search = '') {
     const qb = this.users.createQueryBuilder('u')
-      .orderBy('u.created_at', 'DESC')
+      .orderBy('u.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
     if (search) qb.where('u.name LIKE :s OR u.email LIKE :s', { s: `%${search}%` });
@@ -94,7 +94,7 @@ export class AdminService {
   async getPosts(page = 1, limit = 20, category = '', status = '') {
     const qb = this.posts.createQueryBuilder('p')
       .leftJoinAndSelect('p.images', 'img')
-      .orderBy('p.created_at', 'DESC')
+      .orderBy('p.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit);
     if (category) qb.andWhere('p.category = :category', { category });

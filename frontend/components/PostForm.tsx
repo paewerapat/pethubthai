@@ -23,7 +23,10 @@ const MapPicker = dynamic(() => import('@/components/MapPicker'), {
 
 const schema = z
   .object({
-    petName: z.string().min(1, 'กรุณากรอกชื่อน้อง'),
+    petName: z.string()
+      .min(1, 'กรุณากรอกชื่อน้อง')
+      .min(2, 'ชื่อน้องต้องมีอย่างน้อย 2 ตัวอักษร')
+      .max(50, 'ชื่อน้องยาวเกินไป (ไม่เกิน 50 ตัวอักษร)'),
     petType: z.enum(['cat', 'dog', 'other']),
     otherPetType: z.string().optional(),
     breed: z.string().optional(),
@@ -45,11 +48,16 @@ const schema = z
     latitude: z.number(),
     longitude: z.number(),
     description: z.string().optional(),
-    phoneNumber: z.string().min(1, 'กรุณากรอกเบอร์โทร'),
+    phoneNumber: z.string()
+      .min(1, 'กรุณากรอกเบอร์โทร')
+      .regex(/^0[0-9]{8,9}$/, 'เบอร์โทรไม่ถูกต้อง (ต้องขึ้นต้นด้วย 0 และมี 9-10 หลัก)'),
     lineId: z.string().optional(),
     facebook: z.string().optional(),
     instagram: z.string().optional(),
-    posterName: z.string().min(1, 'กรุณากรอกชื่อผู้โพสต์'),
+    posterName: z.string()
+      .min(1, 'กรุณากรอกชื่อผู้โพสต์')
+      .min(2, 'ชื่อผู้โพสต์ต้องมีอย่างน้อย 2 ตัวอักษร')
+      .max(50, 'ชื่อผู้โพสต์ยาวเกินไป (ไม่เกิน 50 ตัวอักษร)'),
   })
   .refine(
     (d) => d.petType !== 'other' || (d.otherPetType && d.otherPetType.trim().length > 0),

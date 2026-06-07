@@ -83,7 +83,7 @@ export class Post {
   })
   category: PostCategory;
 
-  @Column({ type: 'date', name: 'lost_date', nullable: true })
+  @Column({ type: 'datetime', name: 'lost_date', nullable: true })
   lostDate: Date;
 
   @Column({ name: 'lost_location' })

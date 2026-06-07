@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { FaFacebook } from 'react-icons/fa6';
 import Header from './Header';
+import MobileBottomNav from './MobileBottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,9 +11,10 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-20 md:pb-0">{children}</main>
+      <MobileBottomNav />
 
-      <footer className="bg-white/90 backdrop-blur-xl border-t border-white/50 py-12 mt-20">
+      <footer className="bg-white/90 backdrop-blur-xl border-t border-white/50 pt-12 pb-32 md:pb-12 mt-20">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
 
